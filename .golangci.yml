@@ -92,7 +92,7 @@ linters-settings:
           - git.exness.io
           - google.golang.org
           - github.com
-          - k8s.io/utils
+          - aidanwoods.dev/go-paseto
         # Packages that are not allowed where the value is a suggestion.
         deny:
           - pkg: "github.com/pkg/errors"

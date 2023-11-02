@@ -25,6 +25,8 @@ type configuration struct {
 	WriteTimeout    time.Duration `envconfig:"WRITE_TIMEOUT" default:"10s"`
 	ShutdownTimeout time.Duration `envconfig:"SHUTDOWN_TIMEOUT" default:"10s"`
 
+	SessionSecretKey string `envconfig:"SESSION_SECRET_KEY" default:"5468ac74e23ea5c297413a3020af91601f22c82e77aa89cca4e8fb4ec28fb300"` // this have to be passed from secured store like vault in production env
+
 	RepositoryDSN string `envconfig:"PG_REPOSITORY_DSN" required:"true"`
 }
 
@@ -51,7 +53,8 @@ func run(ctx context.Context, cfg configuration) error {
 	}
 
 	application, err := app.New(app.Config{
-		Repository: repo,
+		Repository:      repo,
+		PasetoSecretKey: cfg.SessionSecretKey,
 	})
 	if err != nil {
 		return err
