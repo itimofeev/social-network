@@ -1,0 +1,163 @@
+run:
+  go: '1.21'
+  skip-dirs-use-default: false
+  tests: false
+  skip-dirs:
+    - contrib
+
+issues:
+  max-same-issues: 0
+
+  exclude:
+    - G107 # Potential HTTP request made with variable url
+    - G404 # Weak random number generator
+    - SA9003 # Empty branch
+
+  exclude-rules:
+    - path: cmd/social-network/*
+      linters:
+        - forbidigo
+
+linters-settings:
+  cyclop:
+    max-complexity: 20
+
+  lll:
+    line-length: 180
+
+  nestif:
+    min-complexity: 7
+
+  tagliatelle:
+    case:
+      use-field-name: true
+      rules:
+        json: camel
+
+  forbidigo:
+    forbid:
+      - .*Fatal.*(# Don't use Fatal anywhere except main)?
+      - .*FatalFn.*(# Don't use Fatal anywhere except main)?
+      - .*Fatalln.*(# Don't use Fatal anywhere except main)?
+      - .*Fatalf.*(# Don't use Fatal anywhere except main)?
+      - .*Panic.*(# Don't use panic, only in exceptional case and write //nolint)?
+      - .*PanicFn.*(# Don't use panic, only in exceptional case and write //nolint)?
+      - .*Panicln.*(# Don't use panic, only in exceptional case and write //nolint)?
+      - .*Panicf.*(# Don't use panic, only in exceptional case and write //nolint)?
+      - .*\.Print.*(# Use logrus levels instead print)?
+
+  nolintlint:
+    # Enable to require an explanation of nonzero length after each nolint directive.
+    # Default: false
+    require-explanation: true
+    # Enable to require nolint directives to mention the specific linter being suppressed.
+    # Default: false
+    require-specific: true
+
+  govet:
+    # Report about shadowed variables.
+    check-shadowing: true
+
+  goimports:
+    # A comma-separated list of prefixes, which, if set, checks import paths
+    # with the given prefixes are grouped after 3rd-party packages.
+    local-prefixes: github.com/itimofeev/social-network
+
+  exhaustive:
+    check-generated: false
+    default-signifies-exhaustive: true
+
+  gofmt:
+    # Simplify code: gofmt with `-s` option.
+    # Default: true
+    simplify: true
+    # Apply the rewrite rules to the source before reformatting.
+    # https://pkg.go.dev/cmd/gofmt
+    # Default: []
+    rewrite-rules:
+      - pattern: 'a[b:len(a)]'
+        replacement: 'a[b:]'
+
+  depguard:
+    rules:
+      # Name of a rule.
+      main:
+        # List of file globs that will match this list of settings to compare against.
+        # Default: $all
+        files:
+          - $all
+        # List of allowed packages.
+        allow:
+          - $gostd
+          - git.exness.io
+          - google.golang.org
+          - github.com
+          - k8s.io/utils
+        # Packages that are not allowed where the value is a suggestion.
+        deny:
+          - pkg: "github.com/pkg/errors"
+            desc: Should be replaced by standard lib errors package
+linters:
+  disable-all: true
+  enable:
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - containedctx
+    - contextcheck
+    - cyclop
+    - decorder
+    - depguard
+    - dogsled
+    - durationcheck
+    - grouper
+    - errname
+    - errcheck
+    - errorlint
+    - exportloopref
+    - execinquery
+    - exhaustive
+    - forbidigo
+    - forcetypeassert
+    - gocheckcompilerdirectives
+    - gochecknoglobals
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - gofmt
+    - goheader
+    - goimports
+    - gomoddirectives
+    - gomodguard
+    - goprintffuncname
+    - gosimple
+    - govet
+    - importas
+    - ineffassign
+    - maintidx
+    - makezero
+    - misspell
+    - mirror
+    - nestif
+    - nilerr
+    - noctx
+    - nolintlint
+    - perfsprint
+    - prealloc
+    - predeclared
+    - protogetter
+    - reassign
+    - staticcheck
+    - tenv
+    - thelper
+    - tparallel
+    - typecheck
+    - unconvert
+    - unused
+    - rowserrcheck
+    - sqlclosecheck
+    - unparam
+    - usestdlibvars
+    - wastedassign
+    - whitespace
