@@ -1,7 +1,32 @@
 ---
 version: "3.4"
 services:
-  pg:
+
+  social-network:
+    build: .
+    image: social-network:local
+    platform: linux/x86_64
+    environment:
+      PG_REPOSITORY_DSN: postgres://admin:admin@db:5432/social-network?sslmode=disable
+    command: [ "/app/social-network" ]
+    ports:
+      - "8080:8080"
+    depends_on:
+      - migrate
+
+  migrate:
+    build: .
+    image: social-network:local
+    platform: linux/x86_64
+    environment:
+      GOOSE_DRIVER: postgres
+      GOOSE_DBSTRING: postgres://admin:admin@db:5432/social-network?sslmode=disable
+    command: [ "/goose", "-dir", "migrations", "up" ]
+    depends_on:
+      - db
+    restart: on-failure
+
+  db:
     image: postgres:14-alpine
     environment:
       POSTGRES_USER: admin
@@ -11,6 +36,11 @@ services:
       - '5432:5432'
     volumes:
       - postgres-db:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres-db:

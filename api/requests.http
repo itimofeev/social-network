@@ -1,0 +1,25 @@
+### Register user
+POST http://127.0.0.1:8080/api/v1/user/register
+Content-Type: application/json
+
+{
+  "first_name": "Hello",
+  "second_name": "There",
+  "birthdate": "2023-01-01",
+  "biography": "biography",
+  "city": "Moscow",
+  "password": "123456"
+}
+
+### Get user by user_id
+GET http://127.0.0.1:8080/api/v1/user/get/7c48611e-4f5f-4bef-aeb4-9fcb5579af86
+Content-Type: application/json
+
+### Login
+POST http://127.0.0.1:8080/api/v1/login
+Content-Type: application/json
+
+{
+  "id": "7c48611e-4f5f-4bef-aeb4-9fcb5579af86",
+  "password": "123456"
+}

@@ -1,5 +1,80 @@
 # social-network
 
+## Инструкция
+Для запуска приложения нужен docker, docker-compose и make для запуска команд из Makefile.
+Все процессы запускаются одной командой `make up`, которая делает следующее:
+- собирает образ с приложением и установленным мигратором для бд
+- запускат контейнер с Postgres-ом
+- запускает мигратор базы, который создаёт нужные таблицы
+- запускает само приложение.
+
+Далее можно отправлять запросы на адрес http://localhost:8080.
+Для удобства отправки запросов есть файлик requests.http, который поддерживается IDE-шками от JetBrains.
+
+## Регистрация пользователя
+
+```shell
+curl -X POST --location "http://127.0.0.1:8080/api/v1/user/register" \
+    -H "Content-Type: application/json" \
+    -d "{
+          \"first_name\": \"Hello\",
+          \"second_name\": \"There\",
+          \"birthdate\": \"2023-01-01\",
+          \"biography\": \"biography\",
+          \"city\": \"Moscow\",
+          \"password\": \"123456\"
+        }"
+```
+
+В ответ вернётся user_id, который является логином пользователя, но почему-то не указан в апишке (
+
+```json
+{
+  "user_id": "7c48611e-4f5f-4bef-aeb4-9fcb5579af86"
+}
+```
+
+## Получение пользователя по user_id
+В url нужно подставить значение логина пользователя, которое было получено при регистрации.
+
+```shell
+curl -X GET --location "http://127.0.0.1:8080/api/v1/user/get/7c48611e-4f5f-4bef-aeb4-9fcb5579af86" \
+    -H "Content-Type: application/json"
+```
+
+В ответ вернётся наш созданный ранее пользователь:
+```json
+{
+  "id": "7c48611e-4f5f-4bef-aeb4-9fcb5579af86",
+  "first_name": "Hello",
+  "second_name": "There",
+  "birthdate": "2023-01-01",
+  "biography": "biography",
+  "city": "Moscow"
+}
+```
+
+## Логин
+
+В запрос надо подставить user_id и passwod из шага регистрации:
+```shell
+curl -X POST --location "http://127.0.0.1:8080/api/v1/login" \
+    -H "Content-Type: application/json" \
+    -d "{
+          \"id\": \"7c48611e-4f5f-4bef-aeb4-9fcb5579af86\",
+          \"password\": \"123456\"
+        }"
+```
+
+В ответ вернётся [PASETO](https://paseto.io/) токен, который в будущем будет использоваться для авторизации вызовов API-шки.
+
+```json
+{
+  "token": "v4.local.YhqXjuSA3F4cVuiW00iO4OXd57jPnNpvjlblxjgqVi_fafbK7gqU3CxPEjnpZClsxbdIPNCYb_Beb4kVKYEmRLhL8ngnNUuK7B_gbARBXfPXTDkcPtqqQXj1Ahvuhwko6RPiSp94LxkcMAg8GylcaWqxuwIgJacZXLA1yVb9zzYFNpImTKQnTAYmLtD-JDkdYe9PE7gsnnehZ7lrX03Ksp0XskwFaUB0EqNQao5xoaySGyxE3LKJXCv3NpQAgrTERGJX1IT4FF8M"
+}
+```
+
+## Задание
 
 Требуется разработать создание и просмотр анкет в социальной сети.
 Функциональные требования:
