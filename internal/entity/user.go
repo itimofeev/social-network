@@ -35,3 +35,10 @@ type CreateUserRequest struct {
 	Interests  string
 	City       string
 }
+
+type Profile struct {
+	FirstName string
+	LastName  string
+	Age       int64
+	City      string
+}

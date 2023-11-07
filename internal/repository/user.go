@@ -5,9 +5,12 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"time"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/google/uuid"
+
+	"github.com/samber/lo"
 
 	"github.com/itimofeev/social-network/internal/entity"
 )
@@ -26,8 +29,8 @@ func userColumns() []string {
 	}
 }
 
-func (r *Repository) InsertUser(ctx context.Context, req entity.CreateUserRequest) (entity.User, error) {
-	insertColumns := []string{
+func insertColumns() []string {
+	return []string{
 		"id",
 		"user_id",
 		"password",
@@ -38,8 +41,11 @@ func (r *Repository) InsertUser(ctx context.Context, req entity.CreateUserReques
 		"interests",
 		"city",
 	}
+}
+
+func (r *Repository) InsertUser(ctx context.Context, req entity.CreateUserRequest) (entity.User, error) {
 	builder := sq.Insert("users").
-		Columns(insertColumns...).
+		Columns(insertColumns()...).
 		Suffix("RETURNING *").
 		PlaceholderFormat(sq.Dollar)
 
@@ -150,4 +156,40 @@ func scanUser(rows rowScanner) (entity.User, error) {
 	}
 
 	return user, nil
+}
+
+func (r *Repository) InsertProfiles(ctx context.Context, profiles []entity.Profile) error {
+	chunks := lo.Chunk(profiles, 5000)
+	for i, chunk := range chunks {
+		builder := sq.Insert("users").
+			Columns(insertColumns()...).
+			PlaceholderFormat(sq.Dollar)
+
+		for _, profile := range chunk {
+			newUUID := uuid.New()
+			builder = builder.Values(
+				newUUID,
+				newUUID,
+				"doesntmatter",
+				profile.FirstName,
+				profile.LastName,
+				time.Now().AddDate(int(-profile.Age), 0, 0),
+				"",
+				"",
+				profile.City)
+		}
+
+		query, args, err := builder.ToSql()
+		if err != nil {
+			return fmt.Errorf("failed to build query: %w", err)
+		}
+
+		_, err = r.getTx(ctx).ExecContext(ctx, query, args...)
+		if err != nil {
+			return fmt.Errorf("failed to execute query: %w", err)
+		}
+
+		fmt.Println("inserted chunks", i, "of", len(chunks), "of size", len(chunk))
+	}
+	return nil
 }

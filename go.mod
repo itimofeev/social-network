@@ -16,6 +16,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/ogen-go/ogen v0.77.0
 	github.com/prometheus/client_golang v1.17.0
+	github.com/samber/lo v1.38.1
 	github.com/stretchr/testify v1.8.4
 	github.com/swaggo/http-swagger v1.3.4
 	go.opentelemetry.io/otel v1.19.0
