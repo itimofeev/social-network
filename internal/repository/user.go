@@ -96,6 +96,42 @@ func (r *Repository) GetUserByUserID(ctx context.Context, userID string) (entity
 	return user, nil
 }
 
+func (r *Repository) SearchUsers(ctx context.Context, firstName string, lastName string) ([]entity.User, error) {
+	builder := sq.Select(userColumns()...).
+		From("users").
+		//Where("first_name LIKE '?' AND second_name LIKE '?'", firstName, lastName).
+		Where("first_name LIKE ?", firstName+"%").
+		Where("second_name LIKE ?", lastName+"%").
+		PlaceholderFormat(sq.Dollar)
+
+	query, args, err := builder.ToSql()
+	if err != nil {
+		return nil, fmt.Errorf("failed to  building sql: %w", err)
+	}
+
+	rows, err := r.getTx(ctx).QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query: %w", err)
+	}
+	defer rows.Close()
+
+	resp := make([]entity.User, 0)
+	for rows.Next() {
+		user, err := scanUser(rows)
+		if err != nil {
+			return nil, fmt.Errorf("error on scan user: %w", err)
+		}
+
+		resp = append(resp, user)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error occurred: %w", err)
+	}
+
+	return resp, nil
+}
+
 func scanUser(rows rowScanner) (entity.User, error) {
 	var user entity.User
 

@@ -67,6 +67,24 @@ func convertUserToAPI(user entity.User) *api.User {
 	}
 }
 
+func convertUsersToAPI(user []entity.User) []api.User {
+	res := make([]api.User, len(user))
+	for i := range user {
+		res[i] = *convertUserToAPI(user[i])
+	}
+	return res
+}
+
+func (h *Handler) UserSearchGet(ctx context.Context, params api.UserSearchGetParams) (api.UserSearchGetRes, error) {
+	users, err := h.app.SearchUsers(ctx, params.FirstName, params.LastName)
+	if err != nil {
+		return nil, err
+	}
+
+	apiUsers := api.UserSearchGetOKApplicationJSON(convertUsersToAPI(users))
+	return &apiUsers, nil
+}
+
 func (h *Handler) HandleBearerAuth(ctx context.Context, operationName string, t api.BearerAuth) (context.Context, error) {
 	panic("implement me")
 }
@@ -104,10 +122,6 @@ func (h *Handler) PostGetIDGet(ctx context.Context, params api.PostGetIDGetParam
 }
 
 func (h *Handler) PostUpdatePut(ctx context.Context, req api.OptPostUpdatePutReq) (api.PostUpdatePutRes, error) {
-	panic("implement me")
-}
-
-func (h *Handler) UserSearchGet(ctx context.Context, params api.UserSearchGetParams) (api.UserSearchGetRes, error) {
 	panic("implement me")
 }
 

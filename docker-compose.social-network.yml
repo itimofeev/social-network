@@ -1,0 +1,23 @@
+---
+version: "3.4"
+services:
+
+  social-network:
+    image: itimofeev/social-network:1.0.0
+    environment:
+      PG_REPOSITORY_DSN: postgres://social-network:wvGI7fofumA3yECJ9UO7NJaxQ@192.168.0.26:5432/social-network?sslmode=disable
+    command: [ "/app/social-network" ]
+    ports:
+      - "8080:8080"
+    depends_on:
+      - migrate
+
+  migrate:
+    image: itimofeev/social-network:1.0.0
+    environment:
+      GOOSE_DRIVER: postgres
+      GOOSE_DBSTRING: postgres://social-network:wvGI7fofumA3yECJ9UO7NJaxQ@192.168.0.26:5432/social-network?sslmode=disable
+    command: [ "/goose", "-dir", "migrations", "up" ]
+    depends_on:
+      - db
+    restart: on-failure

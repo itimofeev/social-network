@@ -14,7 +14,7 @@ import (
 	"github.com/itimofeev/social-network/internal/gen/api"
 )
 
-func (a App) LoginUser(ctx context.Context, userID api.OptUserId, password api.OptString) (string, error) {
+func (a *App) LoginUser(ctx context.Context, userID api.OptUserId, password api.OptString) (string, error) {
 	if !userID.Set {
 		return "", errors.New("user is not set")
 	}
@@ -35,7 +35,7 @@ func (a App) LoginUser(ctx context.Context, userID api.OptUserId, password api.O
 	return a.makeTokenForUser(user), nil
 }
 
-func (a App) checkPassword(user entity.User, password string) error {
+func (a *App) checkPassword(user entity.User, password string) error {
 	unhexedPassword, err := hex.DecodeString(user.Password)
 	if err != nil {
 		return fmt.Errorf("failed to decode password: %w", err)
@@ -47,7 +47,7 @@ func (a App) checkPassword(user entity.User, password string) error {
 	return nil
 }
 
-func (a App) makeTokenForUser(user entity.User) string {
+func (a *App) makeTokenForUser(user entity.User) string {
 	token := paseto.NewToken()
 
 	token.SetIssuedAt(time.Now())

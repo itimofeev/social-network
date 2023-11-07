@@ -13,6 +13,7 @@ import (
 type Repository interface {
 	GetUserByUserID(ctx context.Context, value string) (entity.User, error)
 	InsertUser(ctx context.Context, request entity.CreateUserRequest) (entity.User, error)
+	SearchUsers(ctx context.Context, firstName string, lastName string) ([]entity.User, error)
 }
 
 type Config struct {
