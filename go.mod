@@ -1,6 +1,6 @@
 module github.com/itimofeev/social-network
 
-go 1.21.1
+go 1.21.4
 
 require (
 	aidanwoods.dev/go-paseto v1.5.0

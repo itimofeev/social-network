@@ -46,7 +46,9 @@ func main() {
 
 func run(ctx context.Context, cfg configuration) error {
 	repo, err := repository.New(ctx, repository.Config{
-		DSN: cfg.RepositoryDSN,
+		DSN:          cfg.RepositoryDSN,
+		MaxOpenConns: 0,
+		MaxIdleConns: 10,
 	})
 	if err != nil {
 		return err

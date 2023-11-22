@@ -121,6 +121,10 @@ func (r *Repository) SearchUsers(ctx context.Context, firstName string, lastName
 	}
 	defer rows.Close()
 
+	return scanUsers(rows)
+}
+
+func scanUsers(rows *sql.Rows) ([]entity.User, error) {
 	resp := make([]entity.User, 0)
 	for rows.Next() {
 		user, err := scanUser(rows)

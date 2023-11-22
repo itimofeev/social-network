@@ -3,6 +3,10 @@ package server
 import (
 	"context"
 	"errors"
+	"log/slog"
+	"net/http"
+
+	"github.com/ogen-go/ogen/ogenerrors"
 
 	"github.com/itimofeev/social-network/internal/app"
 	"github.com/itimofeev/social-network/internal/entity"
@@ -11,6 +15,15 @@ import (
 
 type Handler struct {
 	app *app.App
+}
+
+func NewHandler(app *app.App) *Handler {
+	return &Handler{app: app}
+}
+
+func (h *Handler) ErrorHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
+	slog.Warn("Error on handling request", "err", err)
+	ogenerrors.DefaultErrorHandler(ctx, w, r, err)
 }
 
 func (h *Handler) LoginPost(ctx context.Context, req api.OptLoginPostReq) (api.LoginPostRes, error) {
@@ -123,8 +136,4 @@ func (h *Handler) PostGetIDGet(ctx context.Context, params api.PostGetIDGetParam
 
 func (h *Handler) PostUpdatePut(ctx context.Context, req api.OptPostUpdatePutReq) (api.PostUpdatePutRes, error) {
 	panic("implement me")
-}
-
-func NewHandler(app *app.App) *Handler {
-	return &Handler{app: app}
 }

@@ -14,7 +14,9 @@ import (
 )
 
 type Config struct {
-	DSN string `validate:"required,url"`
+	DSN          string `validate:"required,url"`
+	MaxOpenConns int    `validate:"gte=0"`
+	MaxIdleConns int    `validate:"gte=0"`
 }
 
 var (
@@ -45,6 +47,9 @@ func New(ctx context.Context, cfg Config) (*Repository, error) {
 	if err := conn.PingContext(ctx); err != nil {
 		return nil, fmt.Errorf("failed to ping sql connection: %w", err)
 	}
+
+	conn.SetMaxOpenConns(cfg.MaxOpenConns)
+	conn.SetMaxIdleConns(cfg.MaxIdleConns)
 
 	slog.Info("repository initialized")
 
