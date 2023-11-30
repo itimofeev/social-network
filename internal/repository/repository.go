@@ -8,7 +8,9 @@ import (
 	"log/slog"
 
 	"github.com/go-playground/validator/v10"
-	_ "github.com/lib/pq"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/itimofeev/social-network/internal/app"
 )
@@ -16,7 +18,6 @@ import (
 type Config struct {
 	DSN          string `validate:"required,url"`
 	MaxOpenConns int    `validate:"gte=0"`
-	MaxIdleConns int    `validate:"gte=0"`
 }
 
 var (
@@ -24,7 +25,7 @@ var (
 )
 
 type Repository struct {
-	db  *sql.DB
+	db  *pgxpool.Pool
 	cfg Config
 }
 
@@ -37,19 +38,22 @@ func New(ctx context.Context, cfg Config) (*Repository, error) {
 
 	slog.Debug("try to open sql connection")
 
-	conn, err := sql.Open("postgres", cfg.DSN)
+	config, err := pgxpool.ParseConfig(cfg.DSN)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse DSN: %w", err)
+	}
+	config.MaxConns = int32(cfg.MaxOpenConns)
+
+	conn, err := pgxpool.NewWithConfig(ctx, config)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open sql connection: %w", err)
 	}
 
 	slog.Info("trying to ping db")
 
-	if err := conn.PingContext(ctx); err != nil {
+	if err := conn.Ping(ctx); err != nil {
 		return nil, fmt.Errorf("failed to ping sql connection: %w", err)
 	}
-
-	conn.SetMaxOpenConns(cfg.MaxOpenConns)
-	conn.SetMaxIdleConns(cfg.MaxIdleConns)
 
 	slog.Info("repository initialized")
 
@@ -59,14 +63,14 @@ func New(ctx context.Context, cfg Config) (*Repository, error) {
 	}, nil
 }
 
-func (r *Repository) Close() error {
-	return r.db.Close()
+func (r *Repository) Close() {
+	r.Close()
 }
 
 type tx interface {
-	QueryContext(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error)
-	QueryRowContext(ctx context.Context, query string, args ...interface{}) *sql.Row
-	ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error)
+	Query(ctx context.Context, query string, args ...interface{}) (pgx.Rows, error)
+	QueryRow(ctx context.Context, query string, args ...interface{}) pgx.Row
+	Exec(ctx context.Context, query string, args ...interface{}) (pgconn.CommandTag, error)
 }
 
 func (r *Repository) getTx(ctx context.Context) tx {
@@ -79,13 +83,13 @@ func (r *Repository) getTx(ctx context.Context) tx {
 //nolint:unused // will be used in future
 func (r *Repository) withinTransaction(ctx context.Context, tFunc func(ctx context.Context) error) error {
 	// begin transaction
-	tx, err := r.db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelReadCommitted})
+	tx, err := r.db.BeginTx(ctx, pgx.TxOptions{IsoLevel: pgx.ReadCommitted})
 	if err != nil {
 		return fmt.Errorf("failed to db.BeginTx: %w", err)
 	}
 
 	defer func() {
-		if errRollback := tx.Rollback(); errRollback != nil && !errors.Is(errRollback, sql.ErrTxDone) {
+		if errRollback := tx.Rollback(context.Background()); errRollback != nil && !errors.Is(errRollback, sql.ErrTxDone) {
 			slog.Error("failed to tx.Rollback", errRollback)
 		}
 	}()
@@ -95,7 +99,7 @@ func (r *Repository) withinTransaction(ctx context.Context, tFunc func(ctx conte
 		return err
 	}
 	// if no error, commit
-	if err := tx.Commit(); err != nil {
+	if err := tx.Commit(ctx); err != nil {
 		return fmt.Errorf("failed to tx.Commit: %w", err)
 	}
 	return nil
@@ -106,13 +110,13 @@ type txKey struct{}
 // injectTx injects transaction to context
 //
 //nolint:unused // will be used in future
-func injectTx(ctx context.Context, tx *sql.Tx) context.Context {
+func injectTx(ctx context.Context, tx pgx.Tx) context.Context {
 	return context.WithValue(ctx, txKey{}, tx)
 }
 
 // extractTx extracts transaction from context
-func extractTx(ctx context.Context) *sql.Tx {
-	if tx, ok := ctx.Value(txKey{}).(*sql.Tx); ok {
+func extractTx(ctx context.Context) pgx.Tx {
+	if tx, ok := ctx.Value(txKey{}).(pgx.Tx); ok {
 		return tx
 	}
 	return nil
@@ -120,5 +124,4 @@ func extractTx(ctx context.Context) *sql.Tx {
 
 type rowScanner interface {
 	Scan(dest ...any) error
-	Err() error
 }

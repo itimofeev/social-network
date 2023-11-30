@@ -9,6 +9,7 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 
 	"github.com/samber/lo"
 
@@ -65,7 +66,7 @@ func (r *Repository) InsertUser(ctx context.Context, req entity.CreateUserReques
 		return entity.User{}, fmt.Errorf("failed to build query: %w", err)
 	}
 
-	row := r.getTx(ctx).QueryRowContext(ctx, query, args...)
+	row := r.getTx(ctx).QueryRow(ctx, query, args...)
 
 	user, err := scanUser(row)
 	if err != nil {
@@ -86,7 +87,7 @@ func (r *Repository) GetUserByUserID(ctx context.Context, userID string) (entity
 		return entity.User{}, fmt.Errorf("failed to  building sql: %w", err)
 	}
 
-	row := r.getTx(ctx).QueryRowContext(ctx, query, args...)
+	row := r.getTx(ctx).QueryRow(ctx, query, args...)
 	if err != nil {
 		return entity.User{}, fmt.Errorf("failed to query: %w", err)
 	}
@@ -115,7 +116,7 @@ func (r *Repository) SearchUsers(ctx context.Context, firstName string, lastName
 		return nil, fmt.Errorf("failed to  building sql: %w", err)
 	}
 
-	rows, err := r.getTx(ctx).QueryContext(ctx, query, args...)
+	rows, err := r.getTx(ctx).Query(ctx, query, args...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query: %w", err)
 	}
@@ -124,7 +125,7 @@ func (r *Repository) SearchUsers(ctx context.Context, firstName string, lastName
 	return scanUsers(rows)
 }
 
-func scanUsers(rows *sql.Rows) ([]entity.User, error) {
+func scanUsers(rows pgx.Rows) ([]entity.User, error) {
 	resp := make([]entity.User, 0)
 	for rows.Next() {
 		user, err := scanUser(rows)
@@ -188,7 +189,7 @@ func (r *Repository) InsertProfiles(ctx context.Context, profiles []entity.Profi
 			return fmt.Errorf("failed to build query: %w", err)
 		}
 
-		_, err = r.getTx(ctx).ExecContext(ctx, query, args...)
+		_, err = r.getTx(ctx).Exec(ctx, query, args...)
 		if err != nil {
 			return fmt.Errorf("failed to execute query: %w", err)
 		}
