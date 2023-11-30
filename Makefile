@@ -26,3 +26,5 @@ build-docker:
 	docker build -f Dockerfile . \
 		  --platform linux/amd64 \
           --tag social-network:local
+	docker tag social-network:local itimofeev/social-network:1.0.0
+	docker push itimofeev/social-network:1.0.0

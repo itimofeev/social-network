@@ -12,7 +12,7 @@ import (
 	"github.com/itimofeev/social-network/internal/gen/api"
 )
 
-func (a App) CreateUser(ctx context.Context, req api.OptUserRegisterPostReq) (entity.User, error) {
+func (a *App) CreateUser(ctx context.Context, req api.OptUserRegisterPostReq) (entity.User, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Value.Password.Value), bcrypt.DefaultCost)
 	if err != nil {
 		return entity.User{}, err

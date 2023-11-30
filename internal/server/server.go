@@ -59,7 +59,10 @@ func NewServer(cfg Config) (*Server, error) {
 
 	handler := NewHandler(cfg.App)
 
-	opts := []api.ServerOption{api.WithPathPrefix("/api/v1")}
+	opts := []api.ServerOption{
+		api.WithPathPrefix("/api/v1"),
+		api.WithErrorHandler(handler.ErrorHandler),
+	}
 	apiServer, err := api.NewServer(handler, handler, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create api server: %w", err)

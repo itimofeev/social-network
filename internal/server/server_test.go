@@ -42,13 +42,14 @@ func TestCreateGetLoginUser(t *testing.T) {
 		userRegistered = registerResp.(*api.UserRegisterPostOK)
 	})
 
+	var userGot *api.User
 	t.Run("get_user", func(t *testing.T) {
 		gotUserResp, err := client.UserGetIDGet(ctx, api.UserGetIDGetParams{
 			ID: api.UserId(userRegistered.UserID.Value),
 		})
 		require.NoError(t, err)
 		require.IsType(t, gotUserResp, new(api.User))
-		userGot := gotUserResp.(*api.User)
+		userGot = gotUserResp.(*api.User)
 
 		require.Equal(t, userRegistered.UserID, api.NewOptString(string(userGot.ID.Value)))
 	})
@@ -99,6 +100,19 @@ func TestCreateGetLoginUser(t *testing.T) {
 		require.NoError(t, err)
 		require.IsType(t, gotUserResp, new(api.UserGetIDGetNotFound))
 	})
+
+	t.Run("search_user", func(t *testing.T) {
+		searchUserResp, err := client.UserSearchGet(ctx, api.UserSearchGetParams{
+			FirstName: "Maca",
+			LastName:  "Culk",
+		})
+		require.NoError(t, err)
+
+		require.IsType(t, searchUserResp, new(api.UserSearchGetOKApplicationJSON))
+		users := searchUserResp.(*api.UserSearchGetOKApplicationJSON)
+		require.Contains(t, *users, *userGot)
+	})
+
 }
 
 func prepareClient(t *testing.T) (*api.Client, func()) {
