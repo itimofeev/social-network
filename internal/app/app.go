@@ -3,9 +3,11 @@ package app
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"aidanwoods.dev/go-paseto"
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 
 	"github.com/itimofeev/social-network/internal/entity"
 )
@@ -16,14 +18,21 @@ type Repository interface {
 	SearchUsers(ctx context.Context, firstName string, lastName string) ([]entity.User, error)
 }
 
+type MongoRepository interface {
+	SendMessage(ctx context.Context, fromUser, toUser uuid.UUID, messageText string, ts time.Time) error
+	ListMessages(ctx context.Context, fromUser, toUser uuid.UUID, laterThan time.Time) ([]entity.Message, error)
+}
+
 type Config struct {
-	Repository Repository `validate:"required"`
+	PGRepository    Repository      `validate:"required"`
+	MongoRepository MongoRepository `validate:"required"`
 
 	PasetoSecretKey string `validate:"required"`
 }
 
 type App struct {
 	repo      Repository
+	mongoRepo MongoRepository
 	secretKey paseto.V4SymmetricKey
 }
 
@@ -38,7 +47,8 @@ func New(cfg Config) (*App, error) {
 	}
 
 	return &App{
-		repo:      cfg.Repository,
+		repo:      cfg.PGRepository,
+		mongoRepo: cfg.MongoRepository,
 		secretKey: secretKey,
 	}, nil
 }

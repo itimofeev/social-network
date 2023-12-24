@@ -15,7 +15,8 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"github.com/itimofeev/social-network/internal/app"
-	"github.com/itimofeev/social-network/internal/repository"
+	"github.com/itimofeev/social-network/internal/repository/mongo"
+	"github.com/itimofeev/social-network/internal/repository/pg"
 	"github.com/itimofeev/social-network/internal/server"
 )
 
@@ -27,7 +28,8 @@ type configuration struct {
 
 	SessionSecretKey string `envconfig:"SESSION_SECRET_KEY" default:"5468ac74e23ea5c297413a3020af91601f22c82e77aa89cca4e8fb4ec28fb300"` // this have to be passed from secured store like vault in production env
 
-	RepositoryDSN string `envconfig:"PG_REPOSITORY_DSN" required:"true"`
+	PGRepositoryDSN    string `envconfig:"PG_REPOSITORY_DSN" required:"true"`
+	MongoRepositoryDSN string `envconfig:"MONGO_REPOSITORY_DSN" required:"true"`
 }
 
 func main() {
@@ -45,16 +47,24 @@ func main() {
 }
 
 func run(ctx context.Context, cfg configuration) error {
-	repo, err := repository.New(ctx, repository.Config{
-		DSN:          cfg.RepositoryDSN,
+	pgRepo, err := pg.New(ctx, pg.Config{
+		DSN:          cfg.PGRepositoryDSN,
 		MaxOpenConns: 10,
 	})
 	if err != nil {
 		return err
 	}
 
+	mongoRepo, err := mongo.New(ctx, mongo.Config{
+		MongoDSN: cfg.MongoRepositoryDSN,
+	})
+	if err != nil {
+		return err
+	}
+
 	application, err := app.New(app.Config{
-		Repository:      repo,
+		PGRepository:    pgRepo,
+		MongoRepository: mongoRepo,
 		PasetoSecretKey: cfg.SessionSecretKey,
 	})
 	if err != nil {

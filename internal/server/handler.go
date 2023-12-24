@@ -102,14 +102,6 @@ func (h *Handler) HandleBearerAuth(ctx context.Context, operationName string, t 
 	panic("implement me")
 }
 
-func (h *Handler) DialogUserIDListGet(ctx context.Context, params api.DialogUserIDListGetParams) (api.DialogUserIDListGetRes, error) {
-	panic("implement me")
-}
-
-func (h *Handler) DialogUserIDSendPost(ctx context.Context, req api.OptDialogUserIDSendPostReq, params api.DialogUserIDSendPostParams) (api.DialogUserIDSendPostRes, error) {
-	panic("implement me")
-}
-
 func (h *Handler) FriendDeleteUserIDPut(ctx context.Context, params api.FriendDeleteUserIDPutParams) (api.FriendDeleteUserIDPutRes, error) {
 	panic("implement me")
 }

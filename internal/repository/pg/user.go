@@ -1,4 +1,4 @@
-package repository
+package pg
 
 import (
 	"context"
@@ -106,7 +106,6 @@ func (r *Repository) GetUserByUserID(ctx context.Context, userID string) (entity
 func (r *Repository) SearchUsers(ctx context.Context, firstName string, lastName string) ([]entity.User, error) {
 	builder := sq.Select(userColumns()...).
 		From("users").
-		//Where("first_name LIKE '?' AND second_name LIKE '?'", firstName, lastName).
 		Where("first_name LIKE ?", firstName+"%").
 		Where("second_name LIKE ?", lastName+"%").
 		PlaceholderFormat(sq.Dollar)
@@ -165,7 +164,7 @@ func scanUser(rows rowScanner) (entity.User, error) {
 
 func (r *Repository) InsertProfiles(ctx context.Context, profiles []entity.Profile) error {
 	chunks := lo.Chunk(profiles, 5000)
-	for i, chunk := range chunks {
+	for _, chunk := range chunks {
 		builder := sq.Insert("users").
 			Columns(insertColumns()...).
 			PlaceholderFormat(sq.Dollar)
@@ -193,8 +192,6 @@ func (r *Repository) InsertProfiles(ctx context.Context, profiles []entity.Profi
 		if err != nil {
 			return fmt.Errorf("failed to execute query: %w", err)
 		}
-
-		fmt.Println("inserted chunks", i, "of", len(chunks), "of size", len(chunk))
 	}
 	return nil
 }

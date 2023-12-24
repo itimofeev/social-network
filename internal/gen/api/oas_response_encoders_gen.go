@@ -17,11 +17,11 @@ import (
 func encodeDialogUserIDListGetResponse(response DialogUserIDListGetRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
 	case *DialogUserIDListGetOKApplicationJSON:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -42,7 +42,7 @@ func encodeDialogUserIDListGetResponse(response DialogUserIDListGetRes, w http.R
 		return nil
 
 	case *DialogUserIDListGetInternalServerError:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -65,7 +65,7 @@ func encodeDialogUserIDListGetResponse(response DialogUserIDListGetRes, w http.R
 		w.WriteHeader(500)
 		span.SetStatus(codes.Error, http.StatusText(500))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -74,7 +74,7 @@ func encodeDialogUserIDListGetResponse(response DialogUserIDListGetRes, w http.R
 		return nil
 
 	case *DialogUserIDListGetServiceUnavailable:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -97,7 +97,7 @@ func encodeDialogUserIDListGetResponse(response DialogUserIDListGetRes, w http.R
 		w.WriteHeader(503)
 		span.SetStatus(codes.Error, http.StatusText(503))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -131,7 +131,7 @@ func encodeDialogUserIDSendPostResponse(response DialogUserIDSendPostRes, w http
 		return nil
 
 	case *DialogUserIDSendPostInternalServerError:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -154,7 +154,7 @@ func encodeDialogUserIDSendPostResponse(response DialogUserIDSendPostRes, w http
 		w.WriteHeader(500)
 		span.SetStatus(codes.Error, http.StatusText(500))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -163,7 +163,7 @@ func encodeDialogUserIDSendPostResponse(response DialogUserIDSendPostRes, w http
 		return nil
 
 	case *DialogUserIDSendPostServiceUnavailable:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -186,7 +186,7 @@ func encodeDialogUserIDSendPostResponse(response DialogUserIDSendPostRes, w http
 		w.WriteHeader(503)
 		span.SetStatus(codes.Error, http.StatusText(503))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -220,7 +220,7 @@ func encodeFriendDeleteUserIDPutResponse(response FriendDeleteUserIDPutRes, w ht
 		return nil
 
 	case *FriendDeleteUserIDPutInternalServerError:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -243,7 +243,7 @@ func encodeFriendDeleteUserIDPutResponse(response FriendDeleteUserIDPutRes, w ht
 		w.WriteHeader(500)
 		span.SetStatus(codes.Error, http.StatusText(500))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -252,7 +252,7 @@ func encodeFriendDeleteUserIDPutResponse(response FriendDeleteUserIDPutRes, w ht
 		return nil
 
 	case *FriendDeleteUserIDPutServiceUnavailable:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -275,7 +275,7 @@ func encodeFriendDeleteUserIDPutResponse(response FriendDeleteUserIDPutRes, w ht
 		w.WriteHeader(503)
 		span.SetStatus(codes.Error, http.StatusText(503))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -309,7 +309,7 @@ func encodeFriendSetUserIDPutResponse(response FriendSetUserIDPutRes, w http.Res
 		return nil
 
 	case *FriendSetUserIDPutInternalServerError:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -332,7 +332,7 @@ func encodeFriendSetUserIDPutResponse(response FriendSetUserIDPutRes, w http.Res
 		w.WriteHeader(500)
 		span.SetStatus(codes.Error, http.StatusText(500))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -341,7 +341,7 @@ func encodeFriendSetUserIDPutResponse(response FriendSetUserIDPutRes, w http.Res
 		return nil
 
 	case *FriendSetUserIDPutServiceUnavailable:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -364,7 +364,7 @@ func encodeFriendSetUserIDPutResponse(response FriendSetUserIDPutRes, w http.Res
 		w.WriteHeader(503)
 		span.SetStatus(codes.Error, http.StatusText(503))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -380,11 +380,11 @@ func encodeFriendSetUserIDPutResponse(response FriendSetUserIDPutRes, w http.Res
 func encodeLoginPostResponse(response LoginPostRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
 	case *LoginPostOK:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -405,7 +405,7 @@ func encodeLoginPostResponse(response LoginPostRes, w http.ResponseWriter, span 
 		return nil
 
 	case *LoginPostInternalServerError:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -428,7 +428,7 @@ func encodeLoginPostResponse(response LoginPostRes, w http.ResponseWriter, span 
 		w.WriteHeader(500)
 		span.SetStatus(codes.Error, http.StatusText(500))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -437,7 +437,7 @@ func encodeLoginPostResponse(response LoginPostRes, w http.ResponseWriter, span 
 		return nil
 
 	case *LoginPostServiceUnavailable:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -460,7 +460,7 @@ func encodeLoginPostResponse(response LoginPostRes, w http.ResponseWriter, span 
 		w.WriteHeader(503)
 		span.SetStatus(codes.Error, http.StatusText(503))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -476,11 +476,11 @@ func encodeLoginPostResponse(response LoginPostRes, w http.ResponseWriter, span 
 func encodePostCreatePostResponse(response PostCreatePostRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
 	case *PostId:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -501,7 +501,7 @@ func encodePostCreatePostResponse(response PostCreatePostRes, w http.ResponseWri
 		return nil
 
 	case *PostCreatePostInternalServerError:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -524,7 +524,7 @@ func encodePostCreatePostResponse(response PostCreatePostRes, w http.ResponseWri
 		w.WriteHeader(500)
 		span.SetStatus(codes.Error, http.StatusText(500))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -533,7 +533,7 @@ func encodePostCreatePostResponse(response PostCreatePostRes, w http.ResponseWri
 		return nil
 
 	case *PostCreatePostServiceUnavailable:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -556,7 +556,7 @@ func encodePostCreatePostResponse(response PostCreatePostRes, w http.ResponseWri
 		w.WriteHeader(503)
 		span.SetStatus(codes.Error, http.StatusText(503))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -590,7 +590,7 @@ func encodePostDeleteIDPutResponse(response PostDeleteIDPutRes, w http.ResponseW
 		return nil
 
 	case *PostDeleteIDPutInternalServerError:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -613,7 +613,7 @@ func encodePostDeleteIDPutResponse(response PostDeleteIDPutRes, w http.ResponseW
 		w.WriteHeader(500)
 		span.SetStatus(codes.Error, http.StatusText(500))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -622,7 +622,7 @@ func encodePostDeleteIDPutResponse(response PostDeleteIDPutRes, w http.ResponseW
 		return nil
 
 	case *PostDeleteIDPutServiceUnavailable:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -645,7 +645,7 @@ func encodePostDeleteIDPutResponse(response PostDeleteIDPutRes, w http.ResponseW
 		w.WriteHeader(503)
 		span.SetStatus(codes.Error, http.StatusText(503))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -661,11 +661,11 @@ func encodePostDeleteIDPutResponse(response PostDeleteIDPutRes, w http.ResponseW
 func encodePostFeedGetResponse(response PostFeedGetRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
 	case *PostFeedGetOKApplicationJSON:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -686,7 +686,7 @@ func encodePostFeedGetResponse(response PostFeedGetRes, w http.ResponseWriter, s
 		return nil
 
 	case *PostFeedGetInternalServerError:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -709,7 +709,7 @@ func encodePostFeedGetResponse(response PostFeedGetRes, w http.ResponseWriter, s
 		w.WriteHeader(500)
 		span.SetStatus(codes.Error, http.StatusText(500))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -718,7 +718,7 @@ func encodePostFeedGetResponse(response PostFeedGetRes, w http.ResponseWriter, s
 		return nil
 
 	case *PostFeedGetServiceUnavailable:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -741,7 +741,7 @@ func encodePostFeedGetResponse(response PostFeedGetRes, w http.ResponseWriter, s
 		w.WriteHeader(503)
 		span.SetStatus(codes.Error, http.StatusText(503))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -757,11 +757,11 @@ func encodePostFeedGetResponse(response PostFeedGetRes, w http.ResponseWriter, s
 func encodePostGetIDGetResponse(response PostGetIDGetRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
 	case *Post:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -782,7 +782,7 @@ func encodePostGetIDGetResponse(response PostGetIDGetRes, w http.ResponseWriter,
 		return nil
 
 	case *PostGetIDGetInternalServerError:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -805,7 +805,7 @@ func encodePostGetIDGetResponse(response PostGetIDGetRes, w http.ResponseWriter,
 		w.WriteHeader(500)
 		span.SetStatus(codes.Error, http.StatusText(500))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -814,7 +814,7 @@ func encodePostGetIDGetResponse(response PostGetIDGetRes, w http.ResponseWriter,
 		return nil
 
 	case *PostGetIDGetServiceUnavailable:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -837,7 +837,7 @@ func encodePostGetIDGetResponse(response PostGetIDGetRes, w http.ResponseWriter,
 		w.WriteHeader(503)
 		span.SetStatus(codes.Error, http.StatusText(503))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -871,7 +871,7 @@ func encodePostUpdatePutResponse(response PostUpdatePutRes, w http.ResponseWrite
 		return nil
 
 	case *PostUpdatePutInternalServerError:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -894,7 +894,7 @@ func encodePostUpdatePutResponse(response PostUpdatePutRes, w http.ResponseWrite
 		w.WriteHeader(500)
 		span.SetStatus(codes.Error, http.StatusText(500))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -903,7 +903,7 @@ func encodePostUpdatePutResponse(response PostUpdatePutRes, w http.ResponseWrite
 		return nil
 
 	case *PostUpdatePutServiceUnavailable:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -926,7 +926,7 @@ func encodePostUpdatePutResponse(response PostUpdatePutRes, w http.ResponseWrite
 		w.WriteHeader(503)
 		span.SetStatus(codes.Error, http.StatusText(503))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -942,11 +942,11 @@ func encodePostUpdatePutResponse(response PostUpdatePutRes, w http.ResponseWrite
 func encodeUserGetIDGetResponse(response UserGetIDGetRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
 	case *User:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -967,7 +967,7 @@ func encodeUserGetIDGetResponse(response UserGetIDGetRes, w http.ResponseWriter,
 		return nil
 
 	case *UserGetIDGetInternalServerError:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -990,7 +990,7 @@ func encodeUserGetIDGetResponse(response UserGetIDGetRes, w http.ResponseWriter,
 		w.WriteHeader(500)
 		span.SetStatus(codes.Error, http.StatusText(500))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -999,7 +999,7 @@ func encodeUserGetIDGetResponse(response UserGetIDGetRes, w http.ResponseWriter,
 		return nil
 
 	case *UserGetIDGetServiceUnavailable:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -1022,7 +1022,7 @@ func encodeUserGetIDGetResponse(response UserGetIDGetRes, w http.ResponseWriter,
 		w.WriteHeader(503)
 		span.SetStatus(codes.Error, http.StatusText(503))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -1038,11 +1038,11 @@ func encodeUserGetIDGetResponse(response UserGetIDGetRes, w http.ResponseWriter,
 func encodeUserRegisterPostResponse(response UserRegisterPostRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
 	case *UserRegisterPostOK:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -1057,7 +1057,7 @@ func encodeUserRegisterPostResponse(response UserRegisterPostRes, w http.Respons
 		return nil
 
 	case *UserRegisterPostInternalServerError:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -1080,7 +1080,7 @@ func encodeUserRegisterPostResponse(response UserRegisterPostRes, w http.Respons
 		w.WriteHeader(500)
 		span.SetStatus(codes.Error, http.StatusText(500))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -1089,7 +1089,7 @@ func encodeUserRegisterPostResponse(response UserRegisterPostRes, w http.Respons
 		return nil
 
 	case *UserRegisterPostServiceUnavailable:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -1112,7 +1112,7 @@ func encodeUserRegisterPostResponse(response UserRegisterPostRes, w http.Respons
 		w.WriteHeader(503)
 		span.SetStatus(codes.Error, http.StatusText(503))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -1128,11 +1128,11 @@ func encodeUserRegisterPostResponse(response UserRegisterPostRes, w http.Respons
 func encodeUserSearchGetResponse(response UserSearchGetRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
 	case *UserSearchGetOKApplicationJSON:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -1147,7 +1147,7 @@ func encodeUserSearchGetResponse(response UserSearchGetRes, w http.ResponseWrite
 		return nil
 
 	case *UserSearchGetInternalServerError:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -1170,7 +1170,7 @@ func encodeUserSearchGetResponse(response UserSearchGetRes, w http.ResponseWrite
 		w.WriteHeader(500)
 		span.SetStatus(codes.Error, http.StatusText(500))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
@@ -1179,7 +1179,7 @@ func encodeUserSearchGetResponse(response UserSearchGetRes, w http.ResponseWrite
 		return nil
 
 	case *UserSearchGetServiceUnavailable:
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
@@ -1202,7 +1202,7 @@ func encodeUserSearchGetResponse(response UserSearchGetRes, w http.ResponseWrite
 		w.WriteHeader(503)
 		span.SetStatus(codes.Error, http.StatusText(503))
 
-		e := jx.GetEncoder()
+		e := new(jx.Encoder)
 		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")

@@ -15,7 +15,7 @@ import (
 
 	"github.com/itimofeev/social-network/internal/app"
 	"github.com/itimofeev/social-network/internal/gen/api"
-	"github.com/itimofeev/social-network/internal/repository"
+	"github.com/itimofeev/social-network/internal/repository/pg"
 )
 
 func TestCreateGetLoginUser(t *testing.T) {
@@ -117,11 +117,11 @@ func TestCreateGetLoginUser(t *testing.T) {
 
 func prepareClient(t *testing.T) (*api.Client, func()) {
 	ctx := context.Background()
-	repo, err := repository.New(ctx, repository.Config{DSN: os.Getenv("PG_REPOSITORY_DSN")})
+	repo, err := pg.New(ctx, pg.Config{DSN: os.Getenv("PG_REPOSITORY_DSN")})
 	require.NoError(t, err)
 
 	_app, err := app.New(app.Config{
-		Repository:      repo,
+		PGRepository:    repo,
 		PasetoSecretKey: "5468ac74e23ea5c297413a3020af91601f22c82e77aa89cca4e8fb4ec28fb300",
 	})
 	require.NoError(t, err)

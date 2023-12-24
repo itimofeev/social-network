@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-//go:generate go run github.com/ogen-go/ogen/cmd/ogen@v0.76.0 --debug.ignoreNotImplemented "oauth2 security" -package api -clean -no-webhook-client -target ../internal/gen/api openapi.yaml
+//go:generate go run github.com/ogen-go/ogen/cmd/ogen@v0.81.0 -package api -clean -target ../internal/gen/api openapi.yaml
 
 //go:embed openapi.yaml
 var openApiDoc []byte

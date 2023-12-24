@@ -14,7 +14,7 @@ issues:
     - SA9003 # Empty branch
 
   exclude-rules:
-    - path: cmd/social-network/*
+    - path: cmd/*
       linters:
         - forbidigo
 

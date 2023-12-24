@@ -1,4 +1,4 @@
-package repository
+package pg
 
 import (
 	"context"
@@ -64,7 +64,7 @@ func New(ctx context.Context, cfg Config) (*Repository, error) {
 }
 
 func (r *Repository) Close() {
-	r.Close()
+	r.db.Close()
 }
 
 type tx interface {

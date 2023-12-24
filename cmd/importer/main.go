@@ -10,8 +10,10 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/go-faster/errors"
+
 	"github.com/itimofeev/social-network/internal/entity"
-	"github.com/itimofeev/social-network/internal/repository"
+	"github.com/itimofeev/social-network/internal/repository/pg"
 )
 
 func main() {
@@ -21,7 +23,7 @@ func main() {
 }
 
 func run() error {
-	repo, err := repository.New(context.Background(), repository.Config{
+	repo, err := pg.New(context.Background(), pg.Config{
 		DSN: os.Getenv("PG_REPOSITORY_DSN"),
 	})
 
@@ -36,11 +38,10 @@ func run() error {
 
 	var profiles = []entity.Profile{}
 	csvReader := csv.NewReader(f)
-	csvReader.Read()
 
 	for {
 		record, err := csvReader.Read()
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			break
 		}
 		if err != nil {

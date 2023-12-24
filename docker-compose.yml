@@ -42,5 +42,17 @@ services:
       timeout: 5s
       retries: 5
 
+  mongodb:
+    image: mongo:6-jammy
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+      MONGO_INITDB_DATABASE: sc
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-db:/data/db
+
 volumes:
   postgres-db:
+  mongo-db:

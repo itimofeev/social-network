@@ -4,7 +4,7 @@ test::
 
 
 lint::
-	go run github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55.0 -v run ./...
+	go run github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55.2 -v run ./...
 
 
 .PHONY: gen
