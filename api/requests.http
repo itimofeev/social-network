@@ -29,14 +29,14 @@ GET {{host}}/api/v1/user/search?first_name=Илья&last_name=Абрамов
 Content-Type: application/json
 
 ### Dialog get messages
-GET {{host}}/api/v1/dialog/f815aa82-11fc-491b-9d15-7bd370693cf5/list
+GET {{host}}/api/v1/dialog/f815aa82-11fc-491b-9d15-7bd370693cf4/list
 Content-Type: application/json
-Authorization: Bearer v4.local.MMkUDbNjUpT7H-xk-DyjR-BrwZ3ZtWzvvpEwVfCBdyPiK0uTqU_A43Lgaw1zU6KdtF4CfPwIMS2TMzN9cV4ViltsfqIi9YPeokaha6V5qbQr4LZ0F5PM3HcbqVbiiVz5ipUDH4lz9WbTv6ZgUbEGpEXSXeYEx_UlXiY-7Km_SlymMmht5-QbS2uqRHckxNiCjdN7rgbh1YvNIASakh_Wu2P6oQFgEbTJ1k88MqRYJ6LZIZGoD7hCeDkhdykk4PLolwQvsUMff51f1SqCYuuTXGUX3-Fkzmp-
+Authorization: Bearer v4.local.kYQx6vdlT5A2UjGSypj_41r-wYM_L0M_kNKYXMhDQYt1HBiyd0sW3h6ve6LoeydX1d89-xa1mCRy5uEsDDt2Q8f2YwdXP--A7WjEy8MxuuZEHMOg7-v8EYMvP4Nt2yMKzpdbB_Q4SNFzWekNLSugxaf4XokCJC3_fXuuiBlOsUnlRD5HLWgsHyZ8CfwIMnY1CwWQosPTJwtP30P95jjfYuODo4H3_d7QXhEccclEPZWtKJQdQPx7xn3L7LM-gjmCB1WEPGpZpl8w5kqrsP2t69CHqWcEe_D3
 
 ### Send message to dialog
 POST {{host}}/api/v1/dialog/f815aa82-11fc-491b-9d15-7bd370693cf5/send
 Content-Type: application/json
-Authorization: Bearer v4.local.MMkUDbNjUpT7H-xk-DyjR-BrwZ3ZtWzvvpEwVfCBdyPiK0uTqU_A43Lgaw1zU6KdtF4CfPwIMS2TMzN9cV4ViltsfqIi9YPeokaha6V5qbQr4LZ0F5PM3HcbqVbiiVz5ipUDH4lz9WbTv6ZgUbEGpEXSXeYEx_UlXiY-7Km_SlymMmht5-QbS2uqRHckxNiCjdN7rgbh1YvNIASakh_Wu2P6oQFgEbTJ1k88MqRYJ6LZIZGoD7hCeDkhdykk4PLolwQvsUMff51f1SqCYuuTXGUX3-Fkzmp-
+Authorization: Bearer v4.local.kYQx6vdlT5A2UjGSypj_41r-wYM_L0M_kNKYXMhDQYt1HBiyd0sW3h6ve6LoeydX1d89-xa1mCRy5uEsDDt2Q8f2YwdXP--A7WjEy8MxuuZEHMOg7-v8EYMvP4Nt2yMKzpdbB_Q4SNFzWekNLSugxaf4XokCJC3_fXuuiBlOsUnlRD5HLWgsHyZ8CfwIMnY1CwWQosPTJwtP30P95jjfYuODo4H3_d7QXhEccclEPZWtKJQdQPx7xn3L7LM-gjmCB1WEPGpZpl8w5kqrsP2t69CHqWcEe_D3
 
 {
   "text": "hello, there!"

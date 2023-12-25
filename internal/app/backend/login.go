@@ -52,7 +52,7 @@ func (a *App) makeTokenForUser(user entity.User) string {
 
 	token.SetIssuedAt(time.Now())
 	token.SetNotBefore(time.Now())
-	token.SetExpiration(time.Now().Add(2 * time.Hour))
+	token.SetExpiration(time.Now().Add(24 * time.Hour * 10))
 
 	token.SetString("user-id", user.UserID)
 

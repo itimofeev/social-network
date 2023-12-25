@@ -94,7 +94,7 @@ func (r *Repository) GetUserByUserID(ctx context.Context, userID string) (entity
 
 	user, err := scanUser(row)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
+		if errors.Is(err, sql.ErrNoRows) || errors.Is(err, pgx.ErrNoRows) {
 			return entity.User{}, entity.ErrUserNotFound
 		}
 		return entity.User{}, err

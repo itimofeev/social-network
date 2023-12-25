@@ -14,9 +14,12 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"github.com/itimofeev/social-network/internal/app/dialogs"
+	"github.com/itimofeev/social-network/internal/client/backend"
 	"github.com/itimofeev/social-network/internal/repository/mongo"
-	dialogs2 "github.com/itimofeev/social-network/internal/server/dialogs"
+	"github.com/itimofeev/social-network/internal/server/backend/gen/api"
+	dialogsServer "github.com/itimofeev/social-network/internal/server/dialogs"
 	"github.com/itimofeev/social-network/pkg/xlog"
+	"github.com/itimofeev/social-network/pkg/xmw"
 )
 
 type configuration struct {
@@ -26,6 +29,8 @@ type configuration struct {
 	ShutdownTimeout time.Duration `envconfig:"SHUTDOWN_TIMEOUT" default:"10s"`
 
 	MongoRepositoryDSN string `envconfig:"MONGO_REPOSITORY_DSN" required:"true"`
+
+	BackendAddress string `envconfig:"BACKEND_ADDRESS" required:"true"`
 }
 
 func main() {
@@ -45,6 +50,18 @@ func main() {
 func run(ctx context.Context, cfg configuration) error {
 	xlog.InitSlog()
 
+	backendAPI, err := api.NewClient(cfg.BackendAddress, nil, api.WithClient(xmw.NewRequestIDClient()))
+	if err != nil {
+		return fmt.Errorf("failed to create api client: %w", err)
+	}
+
+	backendClient, err := backend.NewClient(backend.Config{
+		BackendAPI: backendAPI,
+	})
+	if err != nil {
+		return err
+	}
+
 	mongoRepo, err := mongo.New(ctx, mongo.Config{
 		MongoDSN: cfg.MongoRepositoryDSN,
 	})
@@ -53,13 +70,14 @@ func run(ctx context.Context, cfg configuration) error {
 	}
 
 	app, err := dialogs.NewApp(dialogs.Config{
-		MongoRepo: mongoRepo,
+		MongoRepo:     mongoRepo,
+		BackendClient: backendClient,
 	})
 	if err != nil {
 		return err
 	}
 
-	srv, err := dialogs2.NewServer(dialogs2.Config{
+	srv, err := dialogsServer.NewServer(dialogsServer.Config{
 		Domain:          "http://localhost:8080",
 		Version:         "1.0.0",
 		Port:            cfg.Port,
