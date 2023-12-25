@@ -1,4 +1,4 @@
-package app
+package backend
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/itimofeev/social-network/internal/entity"
-	"github.com/itimofeev/social-network/internal/gen/api"
+	"github.com/itimofeev/social-network/internal/server/backend/gen/api"
 )
 
 func (a *App) LoginUser(ctx context.Context, userID api.OptUserId, password api.OptString) (string, error) {

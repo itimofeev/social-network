@@ -1,10 +1,9 @@
 //go:build integration
 
-package server
+package backend
 
 import (
 	"context"
-	"net"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -13,9 +12,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/itimofeev/social-network/internal/app"
-	"github.com/itimofeev/social-network/internal/gen/api"
+	"github.com/itimofeev/social-network/internal/app/backend"
 	"github.com/itimofeev/social-network/internal/repository/pg"
+	"github.com/itimofeev/social-network/internal/server/backend/gen/api"
 )
 
 func TestCreateGetLoginUser(t *testing.T) {
@@ -120,7 +119,7 @@ func prepareClient(t *testing.T) (*api.Client, func()) {
 	repo, err := pg.New(ctx, pg.Config{DSN: os.Getenv("PG_REPOSITORY_DSN")})
 	require.NoError(t, err)
 
-	_app, err := app.New(app.Config{
+	_app, err := backend.New(backend.Config{
 		PGRepository:    repo,
 		PasetoSecretKey: "5468ac74e23ea5c297413a3020af91601f22c82e77aa89cca4e8fb4ec28fb300",
 	})
@@ -134,9 +133,6 @@ func prepareClient(t *testing.T) (*api.Client, func()) {
 		WriteTimeout:    time.Second,
 		ShutdownTimeout: time.Second * 10,
 		App:             _app,
-		BaseContextFn: func(_ net.Listener) context.Context {
-			return ctx
-		},
 	})
 
 	serverHandler := server.srv.Handler

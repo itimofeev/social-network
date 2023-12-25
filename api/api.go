@@ -5,11 +5,19 @@ import (
 	"net/http"
 )
 
-//go:generate go run github.com/ogen-go/ogen/cmd/ogen@v0.81.0 -package api -clean -target ../internal/gen/api openapi.yaml
+//go:generate go run github.com/ogen-go/ogen/cmd/ogen@v0.81.0 -package api -clean -target ../internal/server/backend/gen/api backend.yaml
+//go:generate go run github.com/ogen-go/ogen/cmd/ogen@v0.81.0 -package api -clean -target ../internal/server/dialogs/gen/api dialogs.yaml
 
-//go:embed openapi.yaml
-var openApiDoc []byte
+//go:embed backend.yaml
+var backendAPIDoc []byte
 
-func OapiSchemaHandler(w http.ResponseWriter, _ *http.Request) {
-	_, _ = w.Write(openApiDoc)
+//go:embed dialogs.yaml
+var dialogsAPIDoc []byte
+
+func BackendOapiSchemaHandler(w http.ResponseWriter, _ *http.Request) {
+	_, _ = w.Write(backendAPIDoc)
+}
+
+func DialogsOapiSchemaHandler(w http.ResponseWriter, _ *http.Request) {
+	_, _ = w.Write(dialogsAPIDoc)
 }

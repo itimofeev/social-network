@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"log/slog"
-	"net"
 	"os"
 	"os/signal"
 	"syscall"
@@ -14,10 +13,9 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/itimofeev/social-network/internal/app"
-	"github.com/itimofeev/social-network/internal/repository/mongo"
+	backendApp "github.com/itimofeev/social-network/internal/app/backend"
 	"github.com/itimofeev/social-network/internal/repository/pg"
-	"github.com/itimofeev/social-network/internal/server"
+	"github.com/itimofeev/social-network/internal/server/backend"
 )
 
 type configuration struct {
@@ -28,8 +26,7 @@ type configuration struct {
 
 	SessionSecretKey string `envconfig:"SESSION_SECRET_KEY" default:"5468ac74e23ea5c297413a3020af91601f22c82e77aa89cca4e8fb4ec28fb300"` // this have to be passed from secured store like vault in production env
 
-	PGRepositoryDSN    string `envconfig:"PG_REPOSITORY_DSN" required:"true"`
-	MongoRepositoryDSN string `envconfig:"MONGO_REPOSITORY_DSN" required:"true"`
+	PGRepositoryDSN string `envconfig:"PG_REPOSITORY_DSN" required:"true"`
 }
 
 func main() {
@@ -55,26 +52,15 @@ func run(ctx context.Context, cfg configuration) error {
 		return err
 	}
 
-	mongoRepo, err := mongo.New(ctx, mongo.Config{
-		MongoDSN: cfg.MongoRepositoryDSN,
-	})
-	if err != nil {
-		return err
-	}
-
-	application, err := app.New(app.Config{
+	application, err := backendApp.New(backendApp.Config{
 		PGRepository:    pgRepo,
-		MongoRepository: mongoRepo,
 		PasetoSecretKey: cfg.SessionSecretKey,
 	})
 	if err != nil {
 		return err
 	}
 
-	srv, err := server.NewServer(server.Config{
-		BaseContextFn: func(_ net.Listener) context.Context {
-			return ctx
-		},
+	srv, err := backend.NewServer(backend.Config{
 		Domain:          "http://localhost:8080",
 		Version:         "1.0.0",
 		Port:            cfg.Port,

@@ -12,7 +12,7 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/itimofeev/social-network/internal/app"
+	"github.com/itimofeev/social-network/internal/app/backend"
 )
 
 type Config struct {
@@ -21,7 +21,7 @@ type Config struct {
 }
 
 var (
-	_ app.Repository = (*Repository)(nil)
+	_ backend.Repository = (*Repository)(nil)
 )
 
 type Repository struct {

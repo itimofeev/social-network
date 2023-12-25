@@ -1,4 +1,4 @@
-package server
+package backend
 
 import (
 	"context"
@@ -8,16 +8,16 @@ import (
 
 	"github.com/ogen-go/ogen/ogenerrors"
 
-	"github.com/itimofeev/social-network/internal/app"
+	"github.com/itimofeev/social-network/internal/app/backend"
 	"github.com/itimofeev/social-network/internal/entity"
-	"github.com/itimofeev/social-network/internal/gen/api"
+	"github.com/itimofeev/social-network/internal/server/backend/gen/api"
 )
 
 type Handler struct {
-	app *app.App
+	app *backend.App
 }
 
-func NewHandler(app *app.App) *Handler {
+func NewHandler(app *backend.App) *Handler {
 	return &Handler{app: app}
 }
 

@@ -27,3 +27,7 @@ Content-Type: application/json
 ### Search user
 GET {{host}}/api/v1/user/search?first_name=Илья&last_name=Абрамов
 Content-Type: application/json
+
+### Dialog get messages
+GET {{host}}/api/v1/dialog/123/list
+Content-Type: application/json

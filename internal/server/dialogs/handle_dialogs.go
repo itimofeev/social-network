@@ -1,9 +1,9 @@
-package server
+package dialogs
 
 import (
 	"context"
 
-	"github.com/itimofeev/social-network/internal/gen/api"
+	"github.com/itimofeev/social-network/internal/server/dialogs/gen/api"
 )
 
 func (h *Handler) DialogUserIDListGet(ctx context.Context, params api.DialogUserIDListGetParams) (api.DialogUserIDListGetRes, error) {

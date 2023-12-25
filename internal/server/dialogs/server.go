@@ -1,9 +1,8 @@
-package server
+package dialogs
 
 import (
 	"context"
 	"fmt"
-	"net"
 	"net/http"
 	"net/http/pprof"
 	"time"
@@ -19,8 +18,8 @@ import (
 	"github.com/go-playground/validator/v10"
 
 	oapi "github.com/itimofeev/social-network/api"
-	"github.com/itimofeev/social-network/internal/app"
-	"github.com/itimofeev/social-network/internal/gen/api"
+	"github.com/itimofeev/social-network/internal/app/dialogs"
+	"github.com/itimofeev/social-network/internal/server/dialogs/gen/api"
 )
 
 type Config struct {
@@ -32,15 +31,13 @@ type Config struct {
 	WriteTimeout    time.Duration `validate:"required"`
 	ShutdownTimeout time.Duration `validate:"required"`
 
-	App *app.App `validate:"required"`
-
-	BaseContextFn func(_ net.Listener) context.Context `validate:"required"`
+	App *dialogs.App `validate:"required"`
 }
 
 type Server struct {
 	cfg       *Config
 	srv       *http.Server
-	app       *app.App
+	app       *dialogs.App
 	apiServer *api.Server
 }
 
@@ -54,7 +51,6 @@ func NewServer(cfg Config) (*Server, error) {
 		Addr:         ":" + cfg.Port,
 		ReadTimeout:  cfg.ReadTimeout,
 		WriteTimeout: cfg.WriteTimeout,
-		BaseContext:  cfg.BaseContextFn,
 	}
 
 	handler := NewHandler(cfg.App)
@@ -63,7 +59,7 @@ func NewServer(cfg Config) (*Server, error) {
 		api.WithPathPrefix("/api/v1"),
 		api.WithErrorHandler(handler.ErrorHandler),
 	}
-	apiServer, err := api.NewServer(handler, handler, opts...)
+	apiServer, err := api.NewServer(handler, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create api server: %w", err)
 	}
@@ -120,7 +116,7 @@ func (s *Server) init() {
 		router.Get("/ping", s.pingHandler)
 		router.Get("/version", s.versionHandler)
 
-		router.Get("/swagger.yaml", oapi.OapiSchemaHandler)
+		router.Get("/swagger.yaml", oapi.BackendOapiSchemaHandler)
 		router.HandleFunc("/docs", func(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, r.RequestURI+"/index.html", http.StatusMovedPermanently)
 		})

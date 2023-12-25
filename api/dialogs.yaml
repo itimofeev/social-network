@@ -1,0 +1,102 @@
+openapi: 3.0.0
+info:
+  title: OTUS Highload Architect
+  version: 1.2.0
+paths:
+  /dialog/{user_id}/send:
+    post:
+      parameters:
+        - name: user_id
+          schema:
+            $ref: '#/components/schemas/UserId'
+          required: true
+          in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - text
+              properties:
+                text:
+                  $ref: '#/components/schemas/DialogMessageText'
+      responses:
+        '200':
+          description: Успешно отправлено сообщение
+        '401':
+          $ref: '#/components/responses/401'
+        'default':
+          $ref: '#/components/responses/5xx'
+
+  /dialog/{user_id}/list:
+    get:
+      parameters:
+        - name: user_id
+          schema:
+            $ref: '#/components/schemas/UserId'
+          required: true
+          in: path
+      responses:
+        '200':
+          description: Диалог между двумя пользователями
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DialogMessage'
+        '401':
+          $ref: '#/components/responses/401'
+        'default':
+          $ref: '#/components/responses/5xx'
+
+components:
+  responses:
+    '401':
+      description: Неавторизованный доступ
+    5xx:
+      description: Ошибка сервера
+      headers:
+        Retry-After:
+          description: Время, через которое еще раз нужно сделать запрос
+          required: false
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - message
+            properties:
+              message:
+                type: string
+                description: Описание ошибки
+              request_id:
+                type: string
+                description: Идентификатор запроса. Предназначен для более быстрого поиска проблем.
+              code:
+                type: integer
+                description: Код ошибки. Предназначен для классификации проблем и более быстрого решения проблем.
+  schemas:
+    UserId:
+      type: string
+      description: Идентификатор пользователя
+    DialogMessageText:
+      type: string
+      description: Текст сообщения
+      example: Привет, как дела?
+    DialogMessage:
+      type: object
+      required:
+        - from
+        - to
+        - text
+      properties:
+        from:
+          $ref: '#/components/schemas/UserId'
+        to:
+          $ref: '#/components/schemas/UserId'
+        text:
+          $ref: '#/components/schemas/DialogMessageText'
