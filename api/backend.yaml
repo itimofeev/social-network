@@ -141,8 +141,7 @@ paths:
           $ref: '#/components/responses/5xx'
   /friend/set/{user_id}:
     put:
-      security:
-        - bearerAuth: []
+
       parameters:
         - name: user_id
           schema:
@@ -162,8 +161,6 @@ paths:
           $ref: '#/components/responses/5xx'
   /friend/delete/{user_id}:
     put:
-      security:
-        - bearerAuth: []
       parameters:
         - name: user_id
           schema:
@@ -183,8 +180,6 @@ paths:
           $ref: '#/components/responses/5xx'
   /post/create:
     post:
-      security:
-        - bearerAuth: []
       requestBody:
         content:
           application/json:
@@ -212,8 +207,6 @@ paths:
           $ref: '#/components/responses/5xx'
   /post/update:
     put:
-      security:
-        - bearerAuth: []
       requestBody:
         content:
           application/json:
@@ -240,8 +233,6 @@ paths:
           $ref: '#/components/responses/5xx'
   /post/delete/{id}:
     put:
-      security:
-        - bearerAuth: []
       parameters:
         - name: id
           schema:
@@ -284,8 +275,6 @@ paths:
           $ref: '#/components/responses/5xx'
   /post/feed:
     get:
-      security:
-        - bearerAuth: []
       parameters:
         - name: offset
           schema:
@@ -322,6 +311,24 @@ paths:
           $ref: '#/components/responses/5xx'
         '503':
           $ref: '#/components/responses/5xx'
+
+  /auth:
+    get:
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Проверка авторизации запроса
+          headers:
+            X-Sc-User-Id:
+              schema:
+                type: string
+              required: true
+        '401':
+          $ref: '#/components/responses/401'
+        'default':
+          $ref: '#/components/responses/5xx'
+
 
 components:
   responses:

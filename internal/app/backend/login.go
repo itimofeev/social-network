@@ -58,3 +58,11 @@ func (a *App) makeTokenForUser(user entity.User) string {
 
 	return token.V4Encrypt(a.secretKey, nil)
 }
+
+func (a *App) CheckAuth(ctx context.Context, token string) (string, error) {
+	local, err := paseto.NewParser().ParseV4Local(a.secretKey, token, nil)
+	if err != nil {
+		return "", err
+	}
+	return local.GetString("user-id")
+}

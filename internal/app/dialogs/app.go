@@ -33,3 +33,12 @@ func NewApp(cfg Config) (*App, error) {
 		repo: cfg.MongoRepo,
 	}, nil
 }
+
+func (a *App) SendMessage(ctx context.Context, fromUser, toUser uuid.UUID, messageText string, ts time.Time) error {
+	// todo check that toUser exists in backend
+	return a.repo.SendMessage(ctx, fromUser, toUser, messageText, ts)
+}
+
+func (a *App) ListMessages(ctx context.Context, fromUser, toUser uuid.UUID, laterThan time.Time) ([]entity.Message, error) {
+	return a.repo.ListMessages(ctx, fromUser, toUser, laterThan)
+}

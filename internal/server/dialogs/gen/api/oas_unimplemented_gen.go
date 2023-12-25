@@ -23,7 +23,7 @@ func (UnimplementedHandler) DialogUserIDListGet(ctx context.Context, params Dial
 // DialogUserIDSendPost implements POST /dialog/{user_id}/send operation.
 //
 // POST /dialog/{user_id}/send
-func (UnimplementedHandler) DialogUserIDSendPost(ctx context.Context, req OptDialogUserIDSendPostReq, params DialogUserIDSendPostParams) (r DialogUserIDSendPostRes, _ error) {
+func (UnimplementedHandler) DialogUserIDSendPost(ctx context.Context, req *DialogUserIDSendPostReq, params DialogUserIDSendPostParams) (r DialogUserIDSendPostRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

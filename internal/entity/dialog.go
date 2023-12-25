@@ -7,9 +7,10 @@ import (
 )
 
 type Message struct {
-	ID       string
-	DialogID string
-	Author   uuid.UUID
-	Text     string
-	Ts       time.Time
+	ID        string
+	DialogID  string
+	Author    uuid.UUID
+	Recipient uuid.UUID
+	Text      string
+	Ts        time.Time
 }

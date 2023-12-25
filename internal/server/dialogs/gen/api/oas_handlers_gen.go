@@ -82,6 +82,10 @@ func (s *Server) handleDialogUserIDListGetRequest(args [1]string, argsEscaped bo
 					Name: "user_id",
 					In:   "path",
 				}: params.UserID,
+				{
+					Name: "X-Sc-User-Id",
+					In:   "header",
+				}: params.XScUserID,
 			},
 			Raw: r,
 		}
@@ -211,12 +215,16 @@ func (s *Server) handleDialogUserIDSendPostRequest(args [1]string, argsEscaped b
 					Name: "user_id",
 					In:   "path",
 				}: params.UserID,
+				{
+					Name: "X-Sc-User-Id",
+					In:   "header",
+				}: params.XScUserID,
 			},
 			Raw: r,
 		}
 
 		type (
-			Request  = OptDialogUserIDSendPostReq
+			Request  = *DialogUserIDSendPostReq
 			Params   = DialogUserIDSendPostParams
 			Response = DialogUserIDSendPostRes
 		)

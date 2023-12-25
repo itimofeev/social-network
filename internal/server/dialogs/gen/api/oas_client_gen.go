@@ -29,7 +29,7 @@ type Invoker interface {
 	// DialogUserIDSendPost invokes POST /dialog/{user_id}/send operation.
 	//
 	// POST /dialog/{user_id}/send
-	DialogUserIDSendPost(ctx context.Context, request OptDialogUserIDSendPostReq, params DialogUserIDSendPostParams) (DialogUserIDSendPostRes, error)
+	DialogUserIDSendPost(ctx context.Context, request *DialogUserIDSendPostReq, params DialogUserIDSendPostParams) (DialogUserIDSendPostRes, error)
 }
 
 // Client implements OAS client.
@@ -159,6 +159,20 @@ func (c *Client) sendDialogUserIDListGet(ctx context.Context, params DialogUserI
 		return res, errors.Wrap(err, "create request")
 	}
 
+	stage = "EncodeHeaderParams"
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "X-Sc-User-Id",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.XScUserID))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
+	}
+
 	stage = "SendRequest"
 	resp, err := c.cfg.Client.Do(r)
 	if err != nil {
@@ -178,12 +192,12 @@ func (c *Client) sendDialogUserIDListGet(ctx context.Context, params DialogUserI
 // DialogUserIDSendPost invokes POST /dialog/{user_id}/send operation.
 //
 // POST /dialog/{user_id}/send
-func (c *Client) DialogUserIDSendPost(ctx context.Context, request OptDialogUserIDSendPostReq, params DialogUserIDSendPostParams) (DialogUserIDSendPostRes, error) {
+func (c *Client) DialogUserIDSendPost(ctx context.Context, request *DialogUserIDSendPostReq, params DialogUserIDSendPostParams) (DialogUserIDSendPostRes, error) {
 	res, err := c.sendDialogUserIDSendPost(ctx, request, params)
 	return res, err
 }
 
-func (c *Client) sendDialogUserIDSendPost(ctx context.Context, request OptDialogUserIDSendPostReq, params DialogUserIDSendPostParams) (res DialogUserIDSendPostRes, err error) {
+func (c *Client) sendDialogUserIDSendPost(ctx context.Context, request *DialogUserIDSendPostReq, params DialogUserIDSendPostParams) (res DialogUserIDSendPostRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		semconv.HTTPMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/dialog/{user_id}/send"),
@@ -251,6 +265,20 @@ func (c *Client) sendDialogUserIDSendPost(ctx context.Context, request OptDialog
 	}
 	if err := encodeDialogUserIDSendPostRequest(request, r); err != nil {
 		return res, errors.Wrap(err, "encode request")
+	}
+
+	stage = "EncodeHeaderParams"
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "X-Sc-User-Id",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.XScUserID))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
 	}
 
 	stage = "SendRequest"

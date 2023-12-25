@@ -20,28 +20,9 @@ type Handler struct {
 func NewHandler(app *backend.App) *Handler {
 	return &Handler{app: app}
 }
-
 func (h *Handler) ErrorHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
 	slog.Warn("Error on handling request", "err", err)
 	ogenerrors.DefaultErrorHandler(ctx, w, r, err)
-}
-
-func (h *Handler) LoginPost(ctx context.Context, req api.OptLoginPostReq) (api.LoginPostRes, error) {
-	if !req.Set {
-		return &api.LoginPostBadRequest{}, nil
-	}
-	token, err := h.app.LoginUser(ctx, req.Value.ID, req.Value.Password)
-	if err != nil {
-		switch {
-		case errors.Is(err, entity.ErrUserNotFound):
-			return &api.LoginPostNotFound{}, nil
-		case errors.Is(err, entity.ErrIncorrectPassword):
-			return &api.LoginPostBadRequest{}, nil
-		}
-		return nil, err
-	}
-
-	return &api.LoginPostOK{Token: api.NewOptString(token)}, nil
 }
 
 func (h *Handler) UserRegisterPost(ctx context.Context, req api.OptUserRegisterPostReq) (api.UserRegisterPostRes, error) {
@@ -96,10 +77,6 @@ func (h *Handler) UserSearchGet(ctx context.Context, params api.UserSearchGetPar
 
 	apiUsers := api.UserSearchGetOKApplicationJSON(convertUsersToAPI(users))
 	return &apiUsers, nil
-}
-
-func (h *Handler) HandleBearerAuth(ctx context.Context, operationName string, t api.BearerAuth) (context.Context, error) {
-	panic("implement me")
 }
 
 func (h *Handler) FriendDeleteUserIDPut(ctx context.Context, params api.FriendDeleteUserIDPutParams) (api.FriendDeleteUserIDPutRes, error) {

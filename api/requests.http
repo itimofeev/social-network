@@ -20,7 +20,7 @@ POST {{host}}/api/v1/login
 Content-Type: application/json
 
 {
-  "id": "20129b22-6dcb-4718-8fa1-cff3e0d4734d",
+  "id": "5d487ffc-a7bb-4825-9be9-d1835435ce5d",
   "password": "123456"
 }
 
@@ -29,5 +29,15 @@ GET {{host}}/api/v1/user/search?first_name=Илья&last_name=Абрамов
 Content-Type: application/json
 
 ### Dialog get messages
-GET {{host}}/api/v1/dialog/123/list
+GET {{host}}/api/v1/dialog/f815aa82-11fc-491b-9d15-7bd370693cf5/list
 Content-Type: application/json
+Authorization: Bearer v4.local.MMkUDbNjUpT7H-xk-DyjR-BrwZ3ZtWzvvpEwVfCBdyPiK0uTqU_A43Lgaw1zU6KdtF4CfPwIMS2TMzN9cV4ViltsfqIi9YPeokaha6V5qbQr4LZ0F5PM3HcbqVbiiVz5ipUDH4lz9WbTv6ZgUbEGpEXSXeYEx_UlXiY-7Km_SlymMmht5-QbS2uqRHckxNiCjdN7rgbh1YvNIASakh_Wu2P6oQFgEbTJ1k88MqRYJ6LZIZGoD7hCeDkhdykk4PLolwQvsUMff51f1SqCYuuTXGUX3-Fkzmp-
+
+### Send message to dialog
+POST {{host}}/api/v1/dialog/f815aa82-11fc-491b-9d15-7bd370693cf5/send
+Content-Type: application/json
+Authorization: Bearer v4.local.MMkUDbNjUpT7H-xk-DyjR-BrwZ3ZtWzvvpEwVfCBdyPiK0uTqU_A43Lgaw1zU6KdtF4CfPwIMS2TMzN9cV4ViltsfqIi9YPeokaha6V5qbQr4LZ0F5PM3HcbqVbiiVz5ipUDH4lz9WbTv6ZgUbEGpEXSXeYEx_UlXiY-7Km_SlymMmht5-QbS2uqRHckxNiCjdN7rgbh1YvNIASakh_Wu2P6oQFgEbTJ1k88MqRYJ6LZIZGoD7hCeDkhdykk4PLolwQvsUMff51f1SqCYuuTXGUX3-Fkzmp-
+
+{
+  "text": "hello, there!"
+}

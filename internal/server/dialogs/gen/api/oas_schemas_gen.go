@@ -72,52 +72,6 @@ func (s *DialogUserIDSendPostReq) SetText(val DialogMessageText) {
 	s.Text = val
 }
 
-// NewOptDialogUserIDSendPostReq returns new OptDialogUserIDSendPostReq with value set to v.
-func NewOptDialogUserIDSendPostReq(v DialogUserIDSendPostReq) OptDialogUserIDSendPostReq {
-	return OptDialogUserIDSendPostReq{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptDialogUserIDSendPostReq is optional DialogUserIDSendPostReq.
-type OptDialogUserIDSendPostReq struct {
-	Value DialogUserIDSendPostReq
-	Set   bool
-}
-
-// IsSet returns true if OptDialogUserIDSendPostReq was set.
-func (o OptDialogUserIDSendPostReq) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptDialogUserIDSendPostReq) Reset() {
-	var v DialogUserIDSendPostReq
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptDialogUserIDSendPostReq) SetTo(v DialogUserIDSendPostReq) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptDialogUserIDSendPostReq) Get() (v DialogUserIDSendPostReq, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptDialogUserIDSendPostReq) Or(d DialogUserIDSendPostReq) DialogUserIDSendPostReq {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptInt returns new OptInt with value set to v.
 func NewOptInt(v int) OptInt {
 	return OptInt{

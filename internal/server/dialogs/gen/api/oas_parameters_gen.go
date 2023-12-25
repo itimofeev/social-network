@@ -17,7 +17,8 @@ import (
 
 // DialogUserIDListGetParams is parameters of GET /dialog/{user_id}/list operation.
 type DialogUserIDListGetParams struct {
-	UserID UserId
+	UserID    UserId
+	XScUserID string
 }
 
 func unpackDialogUserIDListGetParams(packed middleware.Parameters) (params DialogUserIDListGetParams) {
@@ -28,10 +29,18 @@ func unpackDialogUserIDListGetParams(packed middleware.Parameters) (params Dialo
 		}
 		params.UserID = packed[key].(UserId)
 	}
+	{
+		key := middleware.ParameterKey{
+			Name: "X-Sc-User-Id",
+			In:   "header",
+		}
+		params.XScUserID = packed[key].(string)
+	}
 	return params
 }
 
 func decodeDialogUserIDListGetParams(args [1]string, argsEscaped bool, r *http.Request) (params DialogUserIDListGetParams, _ error) {
+	h := uri.NewHeaderDecoder(r.Header)
 	// Decode path: user_id.
 	if err := func() error {
 		param := args[0]
@@ -84,12 +93,47 @@ func decodeDialogUserIDListGetParams(args [1]string, argsEscaped bool, r *http.R
 			Err:  err,
 		}
 	}
+	// Decode header: X-Sc-User-Id.
+	if err := func() error {
+		cfg := uri.HeaderParameterDecodingConfig{
+			Name:    "X-Sc-User-Id",
+			Explode: false,
+		}
+		if err := h.HasParam(cfg); err == nil {
+			if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToString(val)
+				if err != nil {
+					return err
+				}
+
+				params.XScUserID = c
+				return nil
+			}); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "X-Sc-User-Id",
+			In:   "header",
+			Err:  err,
+		}
+	}
 	return params, nil
 }
 
 // DialogUserIDSendPostParams is parameters of POST /dialog/{user_id}/send operation.
 type DialogUserIDSendPostParams struct {
-	UserID UserId
+	UserID    UserId
+	XScUserID string
 }
 
 func unpackDialogUserIDSendPostParams(packed middleware.Parameters) (params DialogUserIDSendPostParams) {
@@ -100,10 +144,18 @@ func unpackDialogUserIDSendPostParams(packed middleware.Parameters) (params Dial
 		}
 		params.UserID = packed[key].(UserId)
 	}
+	{
+		key := middleware.ParameterKey{
+			Name: "X-Sc-User-Id",
+			In:   "header",
+		}
+		params.XScUserID = packed[key].(string)
+	}
 	return params
 }
 
 func decodeDialogUserIDSendPostParams(args [1]string, argsEscaped bool, r *http.Request) (params DialogUserIDSendPostParams, _ error) {
+	h := uri.NewHeaderDecoder(r.Header)
 	// Decode path: user_id.
 	if err := func() error {
 		param := args[0]
@@ -153,6 +205,40 @@ func decodeDialogUserIDSendPostParams(args [1]string, argsEscaped bool, r *http.
 		return params, &ogenerrors.DecodeParamError{
 			Name: "user_id",
 			In:   "path",
+			Err:  err,
+		}
+	}
+	// Decode header: X-Sc-User-Id.
+	if err := func() error {
+		cfg := uri.HeaderParameterDecodingConfig{
+			Name:    "X-Sc-User-Id",
+			Explode: false,
+		}
+		if err := h.HasParam(cfg); err == nil {
+			if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToString(val)
+				if err != nil {
+					return err
+				}
+
+				params.XScUserID = c
+				return nil
+			}); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "X-Sc-User-Id",
+			In:   "header",
 			Err:  err,
 		}
 	}

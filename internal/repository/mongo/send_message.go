@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -25,12 +26,13 @@ func (r *Repository) SendMessage(ctx context.Context, fromUser, toUser uuid.UUID
 	}
 
 	// todo make concurrent safe
-	// todo redo with structs
-	_, err = r.db.Collection("messages").InsertOne(ctx, bson.M{
-		"dialog_id": dialogId,
-		"author":    fromUser,
-		"text":      messageText,
-		"ts":        ts,
+	_, err = r.db.Collection("messages").InsertOne(ctx, messageDTO{
+		ID:        primitive.NewObjectID(),
+		DialogID:  dialogId.(primitive.ObjectID),
+		Author:    fromUser,
+		Recipient: toUser,
+		Text:      messageText,
+		Ts:        ts,
 	})
 	if err != nil {
 		return fmt.Errorf("failed to insert message: %w", err)

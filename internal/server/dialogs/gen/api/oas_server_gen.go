@@ -15,7 +15,7 @@ type Handler interface {
 	// DialogUserIDSendPost implements POST /dialog/{user_id}/send operation.
 	//
 	// POST /dialog/{user_id}/send
-	DialogUserIDSendPost(ctx context.Context, req OptDialogUserIDSendPostReq, params DialogUserIDSendPostParams) (DialogUserIDSendPostRes, error)
+	DialogUserIDSendPost(ctx context.Context, req *DialogUserIDSendPostReq, params DialogUserIDSendPostParams) (DialogUserIDSendPostRes, error)
 	// NewError creates *R5xxStatusCodeWithHeaders from error returned by handler.
 	//
 	// Used for common default response.
