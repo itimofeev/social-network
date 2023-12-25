@@ -20,7 +20,7 @@ POST {{host}}/api/v1/login
 Content-Type: application/json
 
 {
-  "id": "5d487ffc-a7bb-4825-9be9-d1835435ce5d",
+  "id": "a086c063-713e-4497-8a07-0b659a48eb41",
   "password": "123456"
 }
 
@@ -29,14 +29,14 @@ GET {{host}}/api/v1/user/search?first_name=Илья&last_name=Абрамов
 Content-Type: application/json
 
 ### Dialog get messages
-GET {{host}}/api/v1/dialog/f815aa82-11fc-491b-9d15-7bd370693cf4/list
+GET {{host}}/api/v1/dialog/d06ff731-f291-4703-8010-a53c62be5d2b/list
 Content-Type: application/json
-Authorization: Bearer v4.local.kYQx6vdlT5A2UjGSypj_41r-wYM_L0M_kNKYXMhDQYt1HBiyd0sW3h6ve6LoeydX1d89-xa1mCRy5uEsDDt2Q8f2YwdXP--A7WjEy8MxuuZEHMOg7-v8EYMvP4Nt2yMKzpdbB_Q4SNFzWekNLSugxaf4XokCJC3_fXuuiBlOsUnlRD5HLWgsHyZ8CfwIMnY1CwWQosPTJwtP30P95jjfYuODo4H3_d7QXhEccclEPZWtKJQdQPx7xn3L7LM-gjmCB1WEPGpZpl8w5kqrsP2t69CHqWcEe_D3
+Authorization: Bearer v4.local.2w-1XbhJshuutel46NHJ1jl5BMyj364LzgVKlVLFNPOcV1YbcfAbCXUW9FYVHnt7jHjBLL-Gv3sVmqYvlRBP_WL-_zOFsYF2Lo8irJfavttnEYiSIT5bPTFsKDyfe2PjWXEZty3c_FU9hfmvmYSm_4rzMdwQmlk5frXZFTt31jFbRzasTi7ckTPLnWx7LrAdeUufahmABO7XOTD79VoHdoTrPgLmB-GL124xOSxe-jwjO7n93dEFXlcedp8mIHD2ZbeRE91_LYDU
 
 ### Send message to dialog
-POST {{host}}/api/v1/dialog/f815aa82-11fc-491b-9d15-7bd370693cf5/send
+POST {{host}}/api/v1/dialog/d06ff731-f291-4703-8010-a53c62be5d2b/send
 Content-Type: application/json
-Authorization: Bearer v4.local.kYQx6vdlT5A2UjGSypj_41r-wYM_L0M_kNKYXMhDQYt1HBiyd0sW3h6ve6LoeydX1d89-xa1mCRy5uEsDDt2Q8f2YwdXP--A7WjEy8MxuuZEHMOg7-v8EYMvP4Nt2yMKzpdbB_Q4SNFzWekNLSugxaf4XokCJC3_fXuuiBlOsUnlRD5HLWgsHyZ8CfwIMnY1CwWQosPTJwtP30P95jjfYuODo4H3_d7QXhEccclEPZWtKJQdQPx7xn3L7LM-gjmCB1WEPGpZpl8w5kqrsP2t69CHqWcEe_D3
+Authorization: Bearer v4.local.2w-1XbhJshuutel46NHJ1jl5BMyj364LzgVKlVLFNPOcV1YbcfAbCXUW9FYVHnt7jHjBLL-Gv3sVmqYvlRBP_WL-_zOFsYF2Lo8irJfavttnEYiSIT5bPTFsKDyfe2PjWXEZty3c_FU9hfmvmYSm_4rzMdwQmlk5frXZFTt31jFbRzasTi7ckTPLnWx7LrAdeUufahmABO7XOTD79VoHdoTrPgLmB-GL124xOSxe-jwjO7n93dEFXlcedp8mIHD2ZbeRE91_LYDU
 
 {
   "text": "hello, there!"

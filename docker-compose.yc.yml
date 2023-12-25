@@ -45,44 +45,41 @@ services:
     image: "traefik:v2.10"
     container_name: "traefik"
     command:
+      - "--log=true"
       - "--log.level=DEBUG"
+      - "--api=true"
       - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
+      - "--accesslog=true"
+      - "--providers.file.filename=/etc/traefik/dynamic-traefik.yaml"
       - "--experimental.plugins.traefik-request-id.modulename=github.com/ZeroGachis/traefik-request-id"
       - "--experimental.plugins.traefik-request-id.version=v0.1.5"
     ports:
       - "80:80"
       - "8080:8080"
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./tools/traefik/config-full.yml:/etc/traefik/dynamic-traefik.yaml:ro"
 
   backend:
-    image: itimofeev/social-network:1.0.0
+    image: itimofeev/social-network:2.0.0
     environment:
-      PG_REPOSITORY_DSN: postgres://social-network:wvGI7fofumA3yECJ9UO7NJaxQ@192.168.0.26:5432/social-network?sslmode=disable
+      PORT: 8000
+      PG_REPOSITORY_DSN: postgres://admin:admin@db:5432/social-network?sslmode=disable
     command: [ "/app/social-network" ]
     ports:
-      - "8080:8080"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=PathPrefix(`/api/v1/user`)"
-      - "traefik.http.routers.whoami.entrypoints=web"
+      - "8000:8000"
     depends_on:
       - migrate
 
   dialogs:
-    image: itimofeev/social-network:1.0.0
+    image: itimofeev/social-network:2.0.0
     environment:
-      MONGO_REPOSITORY_DSB: mongodb://admin:admin@localhost:27017/sc
+      PORT: 8001
+      MONGO_REPOSITORY_DSN: mongodb://admin:admin@mongodb:27017
+      BACKEND_ADDRESS: http://backend:8000/api/v1
     command: [ "/app/dialogs" ]
     ports:
-      - "8081:8080"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=PathPrefix(`/api/v1/dialogs`)"
-      - "traefik.http.routers.whoami.entrypoints=web"
+      - "8001:8001"
 
 volumes:
   postgres-db:

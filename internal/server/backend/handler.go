@@ -22,10 +22,6 @@ func NewHandler(app *backend.App) *Handler {
 }
 func (h *Handler) ErrorHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
 	slog.WarnContext(ctx, "Error on handling request", "err", err)
-	switch {
-	case errors.Is(err, entity.ErrUserNotFound):
-
-	}
 	ogenerrors.DefaultErrorHandler(ctx, w, r, err)
 }
 

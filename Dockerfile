@@ -16,8 +16,8 @@ COPY . ./
 
 # Build the binary.
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w -extldflags '-static'" -o social-network ./cmd/social-network && \
-    chmod +x social-network
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w -extldflags '-static'" -o dialogs ./cmd/dialogs && \
+    chmod +x social-network &&\
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w -extldflags '-static'" -o dialogs ./cmd/dialogs && \
     chmod +x dialogs
 
 FROM alpine:3.18
