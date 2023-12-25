@@ -12,7 +12,7 @@ Content-Type: application/json
 }
 
 ### Get user by user_id
-GET {{host}}/api/v1/user/get/20129b22-6dcb-4718-8fa1-cff3e0d4734d
+GET {{host}}/api/v1/user/get/5d487ffc-a7bb-4825-9be9-d1835435ce5d
 Content-Type: application/json
 
 ### Login

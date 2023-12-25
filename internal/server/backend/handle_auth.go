@@ -7,11 +7,8 @@ import (
 
 	"github.com/itimofeev/social-network/internal/entity"
 	"github.com/itimofeev/social-network/internal/server/backend/gen/api"
+	"github.com/itimofeev/social-network/pkg/xcontext"
 )
-
-type userIdCtxKey string
-
-const userIdCtxKeyValue userIdCtxKey = "userId"
 
 func (h *Handler) HandleBearerAuth(ctx context.Context, operationName string, t api.BearerAuth) (context.Context, error) {
 	userID, err := h.app.CheckAuth(ctx, t.Token)
@@ -19,12 +16,12 @@ func (h *Handler) HandleBearerAuth(ctx context.Context, operationName string, t 
 		return nil, err
 	}
 
-	return context.WithValue(ctx, userIdCtxKeyValue, userID), nil
+	return xcontext.WithUserID(ctx, userID), nil
 }
 
 func (h *Handler) AuthGet(ctx context.Context) (r api.AuthGetRes, _ error) {
-	userID, ok := ctx.Value(userIdCtxKeyValue).(string)
-	if !ok {
+	userID := xcontext.GetUserID(ctx)
+	if userID == "" {
 		return nil, errors.New("invalid token")
 	}
 	return &api.AuthGetOK{XScUserID: userID}, nil

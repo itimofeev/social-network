@@ -16,6 +16,7 @@ import (
 	"github.com/itimofeev/social-network/internal/app/dialogs"
 	"github.com/itimofeev/social-network/internal/repository/mongo"
 	dialogs2 "github.com/itimofeev/social-network/internal/server/dialogs"
+	"github.com/itimofeev/social-network/pkg/xlog"
 )
 
 type configuration struct {
@@ -32,16 +33,18 @@ func main() {
 
 	ctx := signalContext(context.Background())
 
-	slog.Info("service is starting")
+	slog.InfoContext(ctx, "service is starting")
 
 	if err := run(ctx, cfg); err != nil {
 		log.Fatalf("service is stopped with error: %s", err)
 	}
 
-	slog.Info("service is stopped")
+	slog.InfoContext(ctx, "service is stopped")
 }
 
 func run(ctx context.Context, cfg configuration) error {
+	xlog.InitSlog()
+
 	mongoRepo, err := mongo.New(ctx, mongo.Config{
 		MongoDSN: cfg.MongoRepositoryDSN,
 	})
@@ -52,6 +55,9 @@ func run(ctx context.Context, cfg configuration) error {
 	app, err := dialogs.NewApp(dialogs.Config{
 		MongoRepo: mongoRepo,
 	})
+	if err != nil {
+		return err
+	}
 
 	srv, err := dialogs2.NewServer(dialogs2.Config{
 		Domain:          "http://localhost:8080",
@@ -70,7 +76,7 @@ func run(ctx context.Context, cfg configuration) error {
 	errGr, errGrCtx := errgroup.WithContext(ctx)
 
 	errGr.Go(func() error {
-		slog.Info("start http server")
+		slog.InfoContext(ctx, "start http server")
 
 		return srv.Serve(errGrCtx)
 	})
@@ -97,7 +103,7 @@ func signalContext(ctx context.Context) context.Context {
 
 	go func() {
 		sig := <-c
-		slog.Info("received signal", sig)
+		slog.InfoContext(ctx, "received signal", sig)
 		cancel()
 	}()
 

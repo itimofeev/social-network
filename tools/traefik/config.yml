@@ -3,14 +3,17 @@ http:
     router-backend-user:
       entryPoints:
         - web
+      middlewares:
+        - requestid-mw
       service: backend
-      rule: PathPrefix(`/api/v1`)
+      rule: PathPrefix(`/api/v1/`)
       priority: 10
 
     router-dialogs:
       entryPoints:
         - web
       middlewares:
+        - requestid-mw
         - auth-mw
       service: dialogs
       rule: PathPrefix(`/api/v1/dialog`)
@@ -34,5 +37,11 @@ http:
         trustForwardHeader: true
         authResponseHeaders:
           - X-Sc-User-Id
+          - X-Request-Id
         authRequestHeaders:
           - Authorization
+          - X-Request-Id
+
+    requestid-mw:
+      plugin:
+        traefik-request-id: {}

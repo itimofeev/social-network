@@ -9,6 +9,7 @@ import (
 
 	"github.com/itimofeev/social-network/internal/app/dialogs"
 	"github.com/itimofeev/social-network/internal/server/dialogs/gen/api"
+	"github.com/itimofeev/social-network/pkg/xcontext"
 )
 
 type Handler struct {
@@ -16,8 +17,18 @@ type Handler struct {
 }
 
 func (h *Handler) NewError(ctx context.Context, err error) *api.R5xxStatusCodeWithHeaders {
-	//TODO implement me
-	panic("implement me")
+	requestID := xcontext.GetRequestID(ctx)
+	return &api.R5xxStatusCodeWithHeaders{
+		StatusCode: http.StatusInternalServerError,
+		Response: api.R5xx{
+			Message: err.Error(),
+			RequestID: api.OptString{
+				Value: requestID,
+				Set:   requestID != "",
+			},
+			Code: api.NewOptInt(http.StatusInternalServerError),
+		},
+	}
 }
 
 func NewHandler(app *dialogs.App) *Handler {
@@ -25,6 +36,6 @@ func NewHandler(app *dialogs.App) *Handler {
 }
 
 func (h *Handler) ErrorHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
-	slog.Warn("Error on handling request", "err", err)
+	slog.WarnContext(ctx, "Error on handling request", "err", err)
 	ogenerrors.DefaultErrorHandler(ctx, w, r, err)
 }

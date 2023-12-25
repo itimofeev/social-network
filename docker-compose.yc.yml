@@ -50,6 +50,8 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
+      - "--experimental.plugins.traefik-request-id.modulename=github.com/ZeroGachis/traefik-request-id"
+      - "--experimental.plugins.traefik-request-id.version=v0.1.5"
     ports:
       - "80:80"
       - "8080:8080"

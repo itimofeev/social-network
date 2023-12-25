@@ -21,7 +21,7 @@ func NewHandler(app *backend.App) *Handler {
 	return &Handler{app: app}
 }
 func (h *Handler) ErrorHandler(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
-	slog.Warn("Error on handling request", "err", err)
+	slog.WarnContext(ctx, "Error on handling request", "err", err)
 	ogenerrors.DefaultErrorHandler(ctx, w, r, err)
 }
 
@@ -39,6 +39,7 @@ func (h *Handler) UserRegisterPost(ctx context.Context, req api.OptUserRegisterP
 }
 
 func (h *Handler) UserGetIDGet(ctx context.Context, params api.UserGetIDGetParams) (api.UserGetIDGetRes, error) {
+	slog.DebugContext(ctx, "try to handle UserGetIDGet", "params", params)
 	user, err := h.app.GetUser(ctx, string(params.ID))
 	if err != nil {
 		if errors.Is(err, entity.ErrUserNotFound) {

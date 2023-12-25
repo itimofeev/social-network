@@ -2,7 +2,9 @@ package dialogs
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"net/http/pprof"
 	"time"
@@ -20,6 +22,7 @@ import (
 	oapi "github.com/itimofeev/social-network/api"
 	"github.com/itimofeev/social-network/internal/app/dialogs"
 	"github.com/itimofeev/social-network/internal/server/dialogs/gen/api"
+	"github.com/itimofeev/social-network/pkg/xmw"
 )
 
 type Config struct {
@@ -76,25 +79,24 @@ func NewServer(cfg Config) (*Server, error) {
 }
 
 func (s *Server) Serve(ctx context.Context) error {
-	errChan := make(chan error, 1)
-	defer close(errChan)
 	go func() {
-		errChan <- s.srv.ListenAndServe()
-	}()
-
-	select {
-	case err := <-errChan:
-		return err
-	case <-ctx.Done():
+		<-ctx.Done()
 		ctxShutdown, cancel := context.WithTimeout(context.Background(), s.cfg.ShutdownTimeout)
 		defer cancel()
 
-		//nolint:contextcheck // context is canceled
+		//nolint:contextcheck // intentionally separate context for shutting down as ctx is already closed
 		if err := s.srv.Shutdown(ctxShutdown); err != nil {
-			return fmt.Errorf("failed to shutdown server: %w", err)
+			slog.WarnContext(ctx, "failed to shutdown server: %w", err)
 		}
-		return nil
+	}()
+
+	if err := s.srv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
+		return fmt.Errorf("failed to listen and serve: %w", err)
 	}
+
+	slog.DebugContext(ctx, "server gracefully stopped")
+
+	return nil
 }
 
 func (s *Server) init() {
@@ -144,6 +146,7 @@ func (s *Server) init() {
 	})
 
 	r.Group(func(r chi.Router) {
+		r.Use(xmw.RequestID)
 		r.Use(middleware.DefaultLogger)
 
 		r.Route("/api/v1", func(api chi.Router) {

@@ -30,13 +30,13 @@ type Repository struct {
 }
 
 func New(ctx context.Context, cfg Config) (*Repository, error) {
-	slog.Debug("try to validate repository config")
+	slog.DebugContext(ctx, "try to validate repository config")
 
 	if err := validator.New().Struct(cfg); err != nil {
 		return nil, fmt.Errorf("failed to validate repository config: %w", err)
 	}
 
-	slog.Debug("try to open sql connection")
+	slog.DebugContext(ctx, "try to open sql connection")
 
 	config, err := pgxpool.ParseConfig(cfg.DSN)
 	if err != nil {
@@ -49,13 +49,13 @@ func New(ctx context.Context, cfg Config) (*Repository, error) {
 		return nil, fmt.Errorf("failed to open sql connection: %w", err)
 	}
 
-	slog.Info("trying to ping db")
+	slog.InfoContext(ctx, "trying to ping db")
 
 	if err := conn.Ping(ctx); err != nil {
 		return nil, fmt.Errorf("failed to ping sql connection: %w", err)
 	}
 
-	slog.Info("repository initialized")
+	slog.InfoContext(ctx, "repository initialized")
 
 	return &Repository{
 		db:  conn,
@@ -89,8 +89,9 @@ func (r *Repository) withinTransaction(ctx context.Context, tFunc func(ctx conte
 	}
 
 	defer func() {
+		//nolint:contextcheck // it's ok to rollback with another context, because ctx may be already canceled
 		if errRollback := tx.Rollback(context.Background()); errRollback != nil && !errors.Is(errRollback, sql.ErrTxDone) {
-			slog.Error("failed to tx.Rollback", errRollback)
+			slog.ErrorContext(ctx, "failed to tx.Rollback", errRollback)
 		}
 	}()
 
