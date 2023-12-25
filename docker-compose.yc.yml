@@ -2,32 +2,85 @@
 version: "3.4"
 services:
 
-  proxy:
-    image: nginx:1.25-alpine
-    volumes:
-      - type: bind
-        source: ./tools/proxy/nginx.conf
-        target: /etc/nginx/conf.d/default.conf
-        read_only: true
-    ports:
-      - "80:80"
-
-  social-network:
-    image: itimofeev/social-network:1.0.0
-    environment:
-      PG_REPOSITORY_DSN: postgres://social-network:wvGI7fofumA3yECJ9UO7NJaxQ@192.168.0.26:5432/social-network?sslmode=disable
-    command: [ "/app/social-network" ]
-    ports:
-      - "8080:8080"
-    depends_on:
-      - migrate
-
   migrate:
-    image: itimofeev/social-network:1.0.0
+    build: .
+    image: social-network:local
+    platform: linux/x86_64
     environment:
       GOOSE_DRIVER: postgres
-      GOOSE_DBSTRING: postgres://social-network:wvGI7fofumA3yECJ9UO7NJaxQ@192.168.0.26:5432/social-network?sslmode=disable
+      GOOSE_DBSTRING: postgres://admin:admin@db:5432/social-network?sslmode=disable
     command: [ "/goose", "-dir", "migrations", "up" ]
     depends_on:
       - db
     restart: on-failure
+
+  db:
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: social-network
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  mongodb:
+    image: mongo:6-jammy
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+      MONGO_INITDB_DATABASE: sc
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-db:/data/db
+
+  traefik:
+    image: "traefik:v2.10"
+    container_name: "traefik"
+    command:
+      - "--log=true"
+      - "--log.level=DEBUG"
+      - "--api=true"
+      - "--api.insecure=true"
+      - "--entrypoints.web.address=:80"
+      - "--accesslog=true"
+      - "--providers.file.filename=/etc/traefik/dynamic-traefik.yaml"
+      - "--experimental.plugins.traefik-request-id.modulename=github.com/ZeroGachis/traefik-request-id"
+      - "--experimental.plugins.traefik-request-id.version=v0.1.5"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "./tools/traefik/config-full.yml:/etc/traefik/dynamic-traefik.yaml:ro"
+
+  backend:
+    image: itimofeev/social-network:2.0.0
+    environment:
+      PORT: 8000
+      PG_REPOSITORY_DSN: postgres://admin:admin@db:5432/social-network?sslmode=disable
+    command: [ "/app/social-network" ]
+    ports:
+      - "8000:8000"
+    depends_on:
+      - migrate
+
+  dialogs:
+    image: itimofeev/social-network:2.0.0
+    environment:
+      PORT: 8001
+      MONGO_REPOSITORY_DSN: mongodb://admin:admin@mongodb:27017
+      BACKEND_ADDRESS: http://backend:8000/api/v1
+    command: [ "/app/dialogs" ]
+    ports:
+      - "8001:8001"
+
+volumes:
+  postgres-db:
+  mongo-db:

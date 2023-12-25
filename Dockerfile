@@ -16,11 +16,14 @@ COPY . ./
 
 # Build the binary.
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w -extldflags '-static'" -o social-network ./cmd/social-network && \
-    chmod +x social-network
+    chmod +x social-network &&\
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w -extldflags '-static'" -o dialogs ./cmd/dialogs && \
+    chmod +x dialogs
 
 FROM alpine:3.18
 
 # Copy the binary to the production image from the builder stage.
-COPY --from=builder /app/social-network /app/social-network
 COPY --from=builder /go/bin/goose /goose
 COPY --from=builder /app/migrations /migrations
+COPY --from=builder /app/social-network /app/social-network
+COPY --from=builder /app/dialogs /app/dialogs

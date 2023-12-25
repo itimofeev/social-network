@@ -4,7 +4,7 @@ test::
 
 
 lint::
-	go run github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55.0 -v run ./...
+	go run github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55.2 -v run ./...
 
 
 .PHONY: gen
@@ -13,9 +13,12 @@ gen:
 
 .PHONY: up
 up:
-	docker-compose up --remove-orphans
+	docker compose up --remove-orphans
 down:
-	docker-compose down
+	docker compose down
+
+up-full:
+	docker compose --file docker-compose.yc.yml up -d --remove-orphans
 
 run-migrations:
 	GOOSE_DRIVER=postgres \
@@ -26,5 +29,5 @@ build-docker:
 	docker build -f Dockerfile . \
 		  --platform linux/amd64 \
           --tag social-network:local
-	docker tag social-network:local itimofeev/social-network:1.0.0
-	docker push itimofeev/social-network:1.0.0
+	docker tag social-network:local itimofeev/social-network:2.0.0
+	docker push itimofeev/social-network:2.0.0

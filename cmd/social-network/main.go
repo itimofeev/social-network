@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"log/slog"
-	"net"
 	"os"
 	"os/signal"
 	"syscall"
@@ -14,9 +13,10 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/itimofeev/social-network/internal/app"
-	"github.com/itimofeev/social-network/internal/repository"
-	"github.com/itimofeev/social-network/internal/server"
+	backendApp "github.com/itimofeev/social-network/internal/app/backend"
+	"github.com/itimofeev/social-network/internal/repository/pg"
+	"github.com/itimofeev/social-network/internal/server/backend"
+	"github.com/itimofeev/social-network/pkg/xlog"
 )
 
 type configuration struct {
@@ -27,7 +27,7 @@ type configuration struct {
 
 	SessionSecretKey string `envconfig:"SESSION_SECRET_KEY" default:"5468ac74e23ea5c297413a3020af91601f22c82e77aa89cca4e8fb4ec28fb300"` // this have to be passed from secured store like vault in production env
 
-	RepositoryDSN string `envconfig:"PG_REPOSITORY_DSN" required:"true"`
+	PGRepositoryDSN string `envconfig:"PG_REPOSITORY_DSN" required:"true"`
 }
 
 func main() {
@@ -35,36 +35,35 @@ func main() {
 
 	ctx := signalContext(context.Background())
 
-	slog.Info("service is starting")
+	slog.InfoContext(ctx, "service is starting")
 
 	if err := run(ctx, cfg); err != nil {
 		log.Fatalf("service is stopped with error: %s", err)
 	}
 
-	slog.Info("service is stopped")
+	slog.InfoContext(ctx, "service is stopped")
 }
 
 func run(ctx context.Context, cfg configuration) error {
-	repo, err := repository.New(ctx, repository.Config{
-		DSN:          cfg.RepositoryDSN,
+	xlog.InitSlog()
+
+	pgRepo, err := pg.New(ctx, pg.Config{
+		DSN:          cfg.PGRepositoryDSN,
 		MaxOpenConns: 10,
 	})
 	if err != nil {
 		return err
 	}
 
-	application, err := app.New(app.Config{
-		Repository:      repo,
+	application, err := backendApp.New(backendApp.Config{
+		PGRepository:    pgRepo,
 		PasetoSecretKey: cfg.SessionSecretKey,
 	})
 	if err != nil {
 		return err
 	}
 
-	srv, err := server.NewServer(server.Config{
-		BaseContextFn: func(_ net.Listener) context.Context {
-			return ctx
-		},
+	srv, err := backend.NewServer(backend.Config{
 		Domain:          "http://localhost:8080",
 		Version:         "1.0.0",
 		Port:            cfg.Port,
@@ -81,7 +80,7 @@ func run(ctx context.Context, cfg configuration) error {
 	errGr, errGrCtx := errgroup.WithContext(ctx)
 
 	errGr.Go(func() error {
-		slog.Info("start http server")
+		slog.InfoContext(ctx, "start http server")
 
 		return srv.Serve(errGrCtx)
 	})
@@ -108,7 +107,7 @@ func signalContext(ctx context.Context) context.Context {
 
 	go func() {
 		sig := <-c
-		slog.Info("received signal", sig)
+		slog.InfoContext(ctx, "received signal", sig)
 		cancel()
 	}()
 

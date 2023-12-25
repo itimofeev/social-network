@@ -1,0 +1,47 @@
+http:
+  routers:
+    router-backend-user:
+      entryPoints:
+        - web
+      middlewares:
+        - requestid-mw
+      service: backend
+      rule: PathPrefix(`/api/v1/`)
+      priority: 10
+
+    router-dialogs:
+      entryPoints:
+        - web
+      middlewares:
+        - requestid-mw
+        - auth-mw
+      service: dialogs
+      rule: PathPrefix(`/api/v1/dialog`)
+      priority: 20
+
+  services:
+    backend:
+      loadBalancer:
+        servers:
+          - url: http://backend:8000
+
+    dialogs:
+      loadBalancer:
+        servers:
+          - url: http://dialogs:8001
+
+  middlewares:
+    auth-mw:
+      forwardAuth:
+        address: http://backend:8000/api/v1/auth
+        trustForwardHeader: true
+        authResponseHeaders:
+          - X-Sc-User-Id
+          - X-Request-Id
+        authRequestHeaders:
+          - Authorization
+          - X-Request-Id
+
+    requestid-mw:
+      plugin:
+        traefik-request-id: {}
