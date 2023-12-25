@@ -1,0 +1,26 @@
+http:
+  routers:
+    router-backend:
+      entryPoints:
+        - web
+      service: backend
+      rule: PathPrefix(`/api/v1/user`)
+      priority: 42
+
+    router-dialogs:
+      entryPoints:
+        - web
+      service: dialogs
+      rule: PathPrefix(`/api/v1/dialog`)
+      priority: 42
+
+  services:
+    backend:
+      loadBalancer:
+        servers:
+          - url: http://host.docker.internal:8000
+
+    dialogs:
+      loadBalancer:
+        servers:
+          - url: http://host.docker.internal:8001

@@ -16,6 +16,8 @@ const idKey = "_id"
 func (r *Repository) SendMessage(ctx context.Context, fromUser, toUser uuid.UUID, messageText string, ts time.Time) error {
 	// todo create index on from to fields
 	// todo create index on ts
+	// https://stackoverflow.com/questions/16358857/mongodb-atomic-findorcreate-findone-insert-if-nonexistent-but-do-not-update
+	// https://stackoverflow.com/questions/22454737/is-there-an-option-to-find-or-insert-in-mongodb
 
 	dialogId, err := r.findDialogID(ctx, fromUser, toUser)
 	if err != nil {
