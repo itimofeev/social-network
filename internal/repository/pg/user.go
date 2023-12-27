@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log/slog"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
@@ -164,7 +165,7 @@ func scanUser(rows rowScanner) (entity.User, error) {
 
 func (r *Repository) InsertProfiles(ctx context.Context, profiles []entity.Profile) error {
 	chunks := lo.Chunk(profiles, 5000)
-	for _, chunk := range chunks {
+	for i, chunk := range chunks {
 		builder := sq.Insert("users").
 			Columns(insertColumns()...).
 			PlaceholderFormat(sq.Dollar)
@@ -191,6 +192,10 @@ func (r *Repository) InsertProfiles(ctx context.Context, profiles []entity.Profi
 		_, err = r.getTx(ctx).Exec(ctx, query, args...)
 		if err != nil {
 			return fmt.Errorf("failed to execute query: %w", err)
+		}
+
+		if (i+1)*5000%100000 == 0 {
+			slog.InfoContext(ctx, "inserted users", (i+1)*5000)
 		}
 	}
 	return nil

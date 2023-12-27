@@ -13,9 +13,11 @@ services:
     depends_on:
       - db
     restart: on-failure
+    networks:
+      - scnet
 
   db:
-    image: postgres:14-alpine
+    image: postgres:15-alpine
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
@@ -23,13 +25,33 @@ services:
     ports:
       - '5432:5432'
     volumes:
-      - postgres-db:/var/lib/postgresql/data
+      - ./tools/data/volumes/pgmaster:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - scnet
 
+  db-async:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: social-network
+    ports:
+      - '6432:5432'
+    volumes:
+      - ./tools/data/volumes/pgasync:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - scnet
+      
   mongodb:
     image: mongo:6-jammy
     environment:
@@ -40,6 +62,8 @@ services:
       - '27017:27017'
     volumes:
       - mongo-db:/data/db
+    networks:
+      - scnet
 
   traefik:
     image: "traefik:v2.10"
@@ -59,7 +83,13 @@ services:
       - "8080:8080"
     volumes:
       - "./tools/traefik/config.yml:/etc/traefik/dynamic-traefik.yaml:ro"
+    networks:
+      - scnet
 
 volumes:
   postgres-db:
   mongo-db:
+
+networks:
+  scnet:
+    

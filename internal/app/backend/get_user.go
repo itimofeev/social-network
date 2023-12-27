@@ -7,6 +7,6 @@ import (
 )
 
 func (a *App) GetUser(ctx context.Context, userID string) (entity.User, error) {
-	user, err := a.repo.GetUserByUserID(ctx, userID)
+	user, err := a.repoReplica.GetUserByUserID(ctx, userID)
 	return user, err
 }

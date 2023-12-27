@@ -39,6 +39,10 @@ VALUES ('a086c063-713e-4497-8a07-0b659a48eb41',
         '',
         'Novosibirsk'
        );
+
+CREATE INDEX users_first_name_second_name_index
+    ON users (first_name text_pattern_ops, second_name text_pattern_ops);
+
 -- +goose StatementEnd
 
 -- +goose Down

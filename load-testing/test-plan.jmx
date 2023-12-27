@@ -617,7 +617,7 @@
       <OpenModelThreadGroup guiclass="OpenModelThreadGroupGui" testclass="OpenModelThreadGroup" testname="OMT search" enabled="true">
         <elementProp name="ThreadGroup.main_controller" elementType="OpenModelThreadGroupController"/>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
-        <stringProp name="OpenModelThreadGroup.schedule">rate(200/sec) random_arrivals(60 sec)</stringProp>
+        <stringProp name="OpenModelThreadGroup.schedule">rate(100/sec) random_arrivals(60 sec)</stringProp>
         <stringProp name="OpenModelThreadGroup.random_seed">12</stringProp>
       </OpenModelThreadGroup>
       <hashTree>

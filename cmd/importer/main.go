@@ -24,7 +24,8 @@ func main() {
 
 func run() error {
 	repo, err := pg.New(context.Background(), pg.Config{
-		DSN: os.Getenv("PG_REPOSITORY_DSN"),
+		DSN:          os.Getenv("PG_REPOSITORY_DSN"),
+		MaxOpenConns: 10,
 	})
 
 	if err != nil {
