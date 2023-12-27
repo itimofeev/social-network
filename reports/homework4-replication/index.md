@@ -13,6 +13,7 @@
 1. Настраиваем асинхронную репликацию.
 2. Выбираем 2 запроса на чтение (/user/get/{id} и /user/search из спецификации) и переносим их на чтение со слейва.
 3. Делаем нагрузочный тест по методам (/user/get/{id} и /user/search из спецификации), которые перевели на слейв до и после репликации. Замеряем нагрузку мастера (CPU, la, disc usage, memory usage).
+
 4. Настроить 2 слейва и 1 мастер.
 5. Включить и настроить синхронную репликацию.
 6. Создать нагрузку на запись в любую тестовую таблицу. На стороне, которой нагружаем считать, сколько строк мы успешно записали.
@@ -35,80 +36,83 @@ Guide: https://github.com/OtusTeam/highload/blob/master/lessons/02/05/live/guide
 - Проведен эксперимент по потере и непотере транзакций при аварийной остановке master.
 
 ## Отчёт 1. Перенос читающей нагрузки на replica-у
-Подготовка: Запускаем два постгреса через docker compose `db` и `db-async` и настраиваем асинхронную репликацию.
 
-1. Создаем сеть, запоминаем адрес
-```bash
-docker network create pgnet
-docker network inspect pgnet | grep Subnet # Запомнить маску сети
-# "Subnet": "172.26.0.0/16",
-```
-2. Меняем postgresql.conf на мастере
-```
-ssl = off
-wal_level = replica
-max_wal_senders = 4 # expected slave num
-```
+Подготовка: запускаем два постгреса через docker compose `db` и `db-async` и настраиваем асинхронную репликацию.
+<details>
+  <summary>Раскрыть</summary>
 
-3. Подключаемся к мастеру и создаем пользователя для репликации
-```bash
-docker exec -it social-network-db-1 psql -U admin social-network
-create role replicator with login replication password 'pass';
-exit
-```
-
-4. Добавляем запись в pgmaster/pg_hba.conf с subnet с первого шага
-```
-host    replication     replicator       172.26.0.0/16          md5
-```
-
-5. Перезапустим мастер
-```bash
-docker compose restart db
-```
-
-6. Сделаем бэкап для реплик
-```bash
-docker exec -it social-network-db-1 bash
-mkdir /pgasync
-pg_basebackup -h db -D /pgasync -U replicator -v -P --wal-method=stream
-exit
-```
-
-7. Копируем директорию себе
-```bash
-docker cp social-network-db-1:/pgasync tools/data/volumes/pgasync/
-```
-
-8. Создадим файл, чтобы реплика узнала, что она реплика
-```bash
-touch tools/data/volumes/pgasync/standby.signal
-```
-
-9. Меняем postgresql.conf на реплике pgasync
-```
-primary_conninfo = 'host=db port=5432 user=replicator password=pass application_name=pgasync'
-```
-
-10. Запускаем реплику pgasync
-```bash
-docker compose up db-async
-```
-
-11. Убеждаемся что реплика работает в асинхронном режиме на pgmaster
-```bash
-docker exec -it social-network-db-1 psql -U admin social-network
-select application_name, sync_state from pg_stat_replication;
-exit;
-```
-Получаем:
-```
-social-network=# select application_name, sync_state from pg_stat_replication;
-application_name | sync_state
-------------------+------------
-pgasync          | async
-(1 row)
-```
+    1. Создаем сеть, запоминаем адрес
+    ```bash
+    docker network inspect social-network_scnet | grep Subnet # Запомнить маску сети
+    # "Subnet": "172.26.0.0/16",
+    ```
+    2. Меняем postgresql.conf на мастере
+    ```
+    ssl = off
+    wal_level = replica
+    max_wal_senders = 4 # expected slave num
+    ```
+    
+    3. Подключаемся к мастеру и создаем пользователя для репликации
+    ```bash
+    docker exec -it social-network-db-1 psql -U admin social-network
+    create role replicator with login replication password 'pass';
+    exit
+    ```
+    
+    4. Добавляем запись в pgmaster/pg_hba.conf с subnet с первого шага
+    ```
+    host    replication     replicator       172.26.0.0/16          md5
+    ```
+    
+    5. Перезапустим мастер
+    ```bash
+    docker compose restart db
+    ```
+    
+    6. Сделаем бэкап для реплик
+    ```bash
+    docker exec -it social-network-db-1 bash
+    mkdir /pgasync
+    pg_basebackup -h db -D /pgasync -U replicator -v -P --wal-method=stream
+    exit
+    ```
+    
+    7. Копируем директорию себе
+    ```bash
+    docker cp social-network-db-1:/pgasync tools/data/volumes/pgasync/
+    ```
+    
+    8. Создадим файл, чтобы реплика узнала, что она реплика
+    ```bash
+    touch tools/data/volumes/pgasync/standby.signal
+    ```
+    
+    9. Меняем postgresql.conf на реплике pgasync
+    ```
+    primary_conninfo = 'host=db port=5432 user=replicator password=pass application_name=pgasync'
+    ```
+    
+    10. Запускаем реплику pgasync
+    ```bash
+    docker compose up db-async
+    ```
+    
+    11. Убеждаемся что реплика работает в асинхронном режиме на pgmaster
+    ```bash
+    docker exec -it social-network-db-1 psql -U admin social-network
+    select application_name, sync_state from pg_stat_replication;
+    exit;
+    ```
+    Получаем:
+    ```
+    social-network=# select application_name, sync_state from pg_stat_replication;
+    application_name | sync_state
+    ------------------+------------
+    pgasync          | async
+    (1 row)
+    ```
+</details>
 
 Далее запускаем приложение, в котором вся нагрузка идёт на мастер `db` и проводим нагрузочный тест на ручку поиска пользователей.
 Видим, что CPU нагрузка именно на мастере:
@@ -133,3 +137,60 @@ e8531f7bd5ac   social-network-db-async-1   7.21%     175.6MiB / 7.668GiB   2.24%
 
 
 
+
+
+
+## Отчёт 2. Возможная потеря транзакций в асинхронной реплике и отсутствие потерь в синхронной
+скопируем бэкап
+
+docker cp social-network-db-1:/pgasync tools/data/volumes/pgsync/
+
+изменим настройки pgsync/postgresql.conf
+
+primary_conninfo = 'host=db port=5432 user=replicator password=pass application_name=pgasyncslave'
+дадим знать что это реплика
+
+touch tools/data/volumes/pgsync/standby.signal
+запустим реплику pgsync
+docker compose up
+
+
+Убеждаемся что обе реплики работают в асинхронном режиме на pgmaster
+
+docker exec -it social-network-db-1 psql -U admin social-network
+select application_name, sync_state from pg_stat_replication;
+exit;
+
+social-network=# select application_name, sync_state from pg_stat_replication;
+application_name | sync_state
+------------------+------------
+pgasync          | async
+pgsync           | async
+(2 rows)
+
+
+
+Включаем синхронную репликацию на pgmaster
+
+меняем файл pgmaster/postgresql.conf
+
+synchronous_commit = on
+synchronous_standby_names = 'FIRST 1 (pgslave, pgasyncslave)'
+перечитываем конфиг
+
+docker exec -it social-network-db-1 psql -U admin social-network
+select pg_reload_conf();
+exit;
+
+Убеждаемся, что реплика стала синхронной
+
+docker exec -it pgmaster su - postgres -c psql
+select application_name, sync_state from pg_stat_replication;
+exit;
+
+social-network=# select application_name, sync_state from pg_stat_replication;
+application_name | sync_state
+------------------+------------
+pgasync          | potential
+pgsync           | sync
+(2 rows)

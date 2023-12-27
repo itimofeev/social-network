@@ -51,7 +51,24 @@ services:
       retries: 5
     networks:
       - scnet
-      
+
+  db-sync:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - '7432:5432'
+    volumes:
+      - ./tools/data/volumes/pgsync:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - scnet
+
   mongodb:
     image: mongo:6-jammy
     environment:
