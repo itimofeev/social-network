@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"strconv"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
@@ -195,7 +196,7 @@ func (r *Repository) InsertProfiles(ctx context.Context, profiles []entity.Profi
 		}
 
 		if (i+1)*5000%100000 == 0 {
-			slog.InfoContext(ctx, "inserted users", (i+1)*5000)
+			slog.InfoContext(ctx, "inserted users", "count", strconv.FormatInt(int64((i+1)*5000), 10))
 		}
 	}
 	return nil

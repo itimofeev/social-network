@@ -227,7 +227,7 @@ func encodeFriendSetUserIDPutResponse(response FriendSetUserIDPutRes, w http.Res
 
 		return nil
 
-	case *FriendSetUserIDPutServiceUnavailable:
+	case *FriendSetUserIDPutInternalServerError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
@@ -271,7 +271,7 @@ func encodeFriendSetUserIDPutResponse(response FriendSetUserIDPutRes, w http.Res
 		}
 		return nil
 
-	case *FriendSetUserIDPutInternalServerError:
+	case *FriendSetUserIDPutServiceUnavailable:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
@@ -580,7 +580,7 @@ func encodePostDeleteIDPutResponse(response PostDeleteIDPutRes, w http.ResponseW
 
 		return nil
 
-	case *PostDeleteIDPutServiceUnavailable:
+	case *PostDeleteIDPutInternalServerError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
@@ -624,7 +624,7 @@ func encodePostDeleteIDPutResponse(response PostDeleteIDPutRes, w http.ResponseW
 		}
 		return nil
 
-	case *PostDeleteIDPutInternalServerError:
+	case *PostDeleteIDPutServiceUnavailable:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
@@ -1167,7 +1167,7 @@ func encodeUserRegisterPostResponse(response UserRegisterPostRes, w http.Respons
 
 		return nil
 
-	case *UserRegisterPostInternalServerError:
+	case *UserRegisterPostServiceUnavailable:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
@@ -1211,7 +1211,7 @@ func encodeUserRegisterPostResponse(response UserRegisterPostRes, w http.Respons
 		}
 		return nil
 
-	case *UserRegisterPostServiceUnavailable:
+	case *UserRegisterPostInternalServerError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
@@ -1281,7 +1281,7 @@ func encodeUserSearchGetResponse(response UserSearchGetRes, w http.ResponseWrite
 
 		return nil
 
-	case *UserSearchGetInternalServerError:
+	case *UserSearchGetServiceUnavailable:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
@@ -1325,7 +1325,7 @@ func encodeUserSearchGetResponse(response UserSearchGetRes, w http.ResponseWrite
 		}
 		return nil
 
-	case *UserSearchGetServiceUnavailable:
+	case *UserSearchGetInternalServerError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{

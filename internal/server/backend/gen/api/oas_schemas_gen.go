@@ -308,98 +308,6 @@ func (o OptLoginPostReq) Or(d LoginPostReq) LoginPostReq {
 	return d
 }
 
-// NewOptPostId returns new OptPostId with value set to v.
-func NewOptPostId(v PostId) OptPostId {
-	return OptPostId{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptPostId is optional PostId.
-type OptPostId struct {
-	Value PostId
-	Set   bool
-}
-
-// IsSet returns true if OptPostId was set.
-func (o OptPostId) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptPostId) Reset() {
-	var v PostId
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptPostId) SetTo(v PostId) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptPostId) Get() (v PostId, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptPostId) Or(d PostId) PostId {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptPostText returns new OptPostText with value set to v.
-func NewOptPostText(v PostText) OptPostText {
-	return OptPostText{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptPostText is optional PostText.
-type OptPostText struct {
-	Value PostText
-	Set   bool
-}
-
-// IsSet returns true if OptPostText was set.
-func (o OptPostText) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptPostText) Reset() {
-	var v PostText
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptPostText) SetTo(v PostText) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptPostText) Get() (v PostText, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptPostText) Or(d PostText) PostText {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptString returns new OptString with value set to v.
 func NewOptString(v string) OptString {
 	return OptString{
@@ -541,38 +449,38 @@ func (o OptUserRegisterPostReq) Or(d UserRegisterPostReq) UserRegisterPostReq {
 // Пост пользователя.
 // Ref: #/components/schemas/Post
 type Post struct {
-	ID           OptPostId   `json:"id"`
-	Text         OptPostText `json:"text"`
-	AuthorUserID OptUserId   `json:"author_user_id"`
+	ID           PostId   `json:"id"`
+	Text         PostText `json:"text"`
+	AuthorUserID UserId   `json:"author_user_id"`
 }
 
 // GetID returns the value of ID.
-func (s *Post) GetID() OptPostId {
+func (s *Post) GetID() PostId {
 	return s.ID
 }
 
 // GetText returns the value of Text.
-func (s *Post) GetText() OptPostText {
+func (s *Post) GetText() PostText {
 	return s.Text
 }
 
 // GetAuthorUserID returns the value of AuthorUserID.
-func (s *Post) GetAuthorUserID() OptUserId {
+func (s *Post) GetAuthorUserID() UserId {
 	return s.AuthorUserID
 }
 
 // SetID sets the value of ID.
-func (s *Post) SetID(val OptPostId) {
+func (s *Post) SetID(val PostId) {
 	s.ID = val
 }
 
 // SetText sets the value of Text.
-func (s *Post) SetText(val OptPostText) {
+func (s *Post) SetText(val PostText) {
 	s.Text = val
 }
 
 // SetAuthorUserID sets the value of AuthorUserID.
-func (s *Post) SetAuthorUserID(val OptUserId) {
+func (s *Post) SetAuthorUserID(val UserId) {
 	s.AuthorUserID = val
 }
 

@@ -61,3 +61,8 @@ Authorization: Bearer v4.local.2w-1XbhJshuutel46NHJ1jl5BMyj364LzgVKlVLFNPOcV1Ybc
 {
   "text": "hello, it's my awesome post!"
 }
+
+### [POST] get
+GET {{host}}/api/v1/post/get/c627f786-7de3-4c3c-b78e-78323682ac9f
+Content-Type: application/json
+Authorization: Bearer v4.local.2w-1XbhJshuutel46NHJ1jl5BMyj364LzgVKlVLFNPOcV1YbcfAbCXUW9FYVHnt7jHjBLL-Gv3sVmqYvlRBP_WL-_zOFsYF2Lo8irJfavttnEYiSIT5bPTFsKDyfe2PjWXEZty3c_FU9hfmvmYSm_4rzMdwQmlk5frXZFTt31jFbRzasTi7ckTPLnWx7LrAdeUufahmABO7XOTD79VoHdoTrPgLmB-GL124xOSxe-jwjO7n93dEFXlcedp8mIHD2ZbeRE91_LYDU

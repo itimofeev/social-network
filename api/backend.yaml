@@ -443,6 +443,10 @@ components:
           $ref: '#/components/schemas/PostText'
         author_user_id:
           $ref: '#/components/schemas/UserId'
+      required:
+        - id
+        - text
+        - author_user_id
 
   securitySchemes:
     bearerAuth:

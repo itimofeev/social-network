@@ -18,6 +18,9 @@ type Repository interface {
 	DeleteFollower(ctx context.Context, userID uuid.UUID, followUserID uuid.UUID) error
 	SetFollower(ctx context.Context, userID uuid.UUID, followUserID uuid.UUID) error
 	CreatePost(ctx context.Context, id uuid.UUID, text string) (string, error)
+	DeletePost(ctx context.Context, postID string) error
+	GetPost(ctx context.Context, postID string) (entity.Post, error)
+	UpdatePost(ctx context.Context, postID string, text string) error
 }
 
 type Config struct {
