@@ -1,5 +1,19 @@
 ---
 version: "3.4"
+
+x-postgres-common:
+  &postgres-common
+  image: postgres:15-alpine
+  user: postgres
+  restart: always
+  healthcheck:
+    test: 'pg_isready -U user --dbname=postgres'
+    interval: 10s
+    timeout: 5s
+    retries: 5
+  cap_add:
+    - NET_ADMIN
+
 services:
 
   migrate:
@@ -15,20 +29,49 @@ services:
     restart: on-failure
 
   db:
-    image: postgres:14-alpine
+    <<: *postgres-common
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: social-network
+      POSTGRES_HOST_AUTH_METHOD: "scram-sha-256\nhost replication all 0.0.0.0/0 md5"
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
     ports:
       - '5432:5432'
     volumes:
       - postgres-db:/var/lib/postgresql/data
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+    command: |
+      postgres 
+      -c wal_level=replica 
+      -c hot_standby=on 
+      -c max_wal_senders=10 
+      -c max_replication_slots=10 
+      -c hot_standby_feedback=on
+
+  pgasync:
+    <<: *postgres-common
+    ports:
+      - 6432:5432
+    environment:
+      PGUSER: replicator
+      PGPASSWORD: replicator_password
+    command: |
+      bash -c "
+      
+      until pg_basebackup --pgdata=/var/lib/postgresql/data -R --slot=replication_slot_async --host=db --port=5432 | true
+      do
+        echo 'Waiting for primary to connect...'
+        sleep 1s
+      done
+      echo 'Backup done, starting replica...'
+      chmod 0700 /var/lib/postgresql/data
+      
+      sed -i 's/target_session_attrs=any/target_session_attrs=any application_name=pgasync/g' /var/lib/postgresql/data/postgresql.auto.conf
+
+      postgres
+      "
+    depends_on:
+      - db
 
   mongodb:
     image: mongo:6-jammy

@@ -79,31 +79,3 @@ func (h *Handler) UserSearchGet(ctx context.Context, params api.UserSearchGetPar
 	apiUsers := api.UserSearchGetOKApplicationJSON(convertUsersToAPI(users))
 	return &apiUsers, nil
 }
-
-func (h *Handler) FriendDeleteUserIDPut(ctx context.Context, params api.FriendDeleteUserIDPutParams) (api.FriendDeleteUserIDPutRes, error) {
-	panic("implement me")
-}
-
-func (h *Handler) FriendSetUserIDPut(ctx context.Context, params api.FriendSetUserIDPutParams) (api.FriendSetUserIDPutRes, error) {
-	panic("implement me")
-}
-
-func (h *Handler) PostCreatePost(ctx context.Context, req api.OptPostCreatePostReq) (api.PostCreatePostRes, error) {
-	panic("implement me")
-}
-
-func (h *Handler) PostDeleteIDPut(ctx context.Context, params api.PostDeleteIDPutParams) (api.PostDeleteIDPutRes, error) {
-	panic("implement me")
-}
-
-func (h *Handler) PostFeedGet(ctx context.Context, params api.PostFeedGetParams) (api.PostFeedGetRes, error) {
-	panic("implement me")
-}
-
-func (h *Handler) PostGetIDGet(ctx context.Context, params api.PostGetIDGetParams) (api.PostGetIDGetRes, error) {
-	panic("implement me")
-}
-
-func (h *Handler) PostUpdatePut(ctx context.Context, req api.OptPostUpdatePutReq) (api.PostUpdatePutRes, error) {
-	panic("implement me")
-}

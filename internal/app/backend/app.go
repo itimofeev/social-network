@@ -6,6 +6,7 @@ import (
 
 	"aidanwoods.dev/go-paseto"
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 
 	"github.com/itimofeev/social-network/internal/entity"
 )
@@ -14,6 +15,8 @@ type Repository interface {
 	GetUserByUserID(ctx context.Context, value string) (entity.User, error)
 	InsertUser(ctx context.Context, request entity.CreateUserRequest) (entity.User, error)
 	SearchUsers(ctx context.Context, firstName string, lastName string) ([]entity.User, error)
+	DeleteFollower(ctx context.Context, userID uuid.UUID, followUserID uuid.UUID) error
+	SetFollower(ctx context.Context, userID uuid.UUID, followUserID uuid.UUID) error
 }
 
 type Config struct {

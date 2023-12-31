@@ -141,13 +141,17 @@ paths:
           $ref: '#/components/responses/5xx'
   /friend/set/{user_id}:
     put:
-
       parameters:
         - name: user_id
           schema:
             $ref: '#/components/schemas/UserId'
           required: true
           in: path
+        - name: X-Sc-User-Id
+          schema:
+            type: string
+          required: true
+          in: header
       responses:
         '200':
           description: Пользователь успешно указал своего друга
@@ -167,6 +171,11 @@ paths:
             $ref: '#/components/schemas/UserId'
           required: true
           in: path
+        - name: X-Sc-User-Id
+          schema:
+            type: string
+          required: true
+          in: header
       responses:
         '200':
           description: Пользователь успешно удалил из друзей пользователя

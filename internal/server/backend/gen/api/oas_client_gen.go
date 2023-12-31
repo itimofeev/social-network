@@ -309,6 +309,20 @@ func (c *Client) sendFriendDeleteUserIDPut(ctx context.Context, params FriendDel
 		return res, errors.Wrap(err, "create request")
 	}
 
+	stage = "EncodeHeaderParams"
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "X-Sc-User-Id",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.XScUserID))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
+	}
+
 	stage = "SendRequest"
 	resp, err := c.cfg.Client.Do(r)
 	if err != nil {
@@ -397,6 +411,20 @@ func (c *Client) sendFriendSetUserIDPut(ctx context.Context, params FriendSetUse
 	r, err := ht.NewRequest(ctx, "PUT", u)
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "EncodeHeaderParams"
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "X-Sc-User-Id",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.XScUserID))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
 	}
 
 	stage = "SendRequest"

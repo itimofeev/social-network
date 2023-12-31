@@ -41,3 +41,14 @@ Authorization: Bearer v4.local.2w-1XbhJshuutel46NHJ1jl5BMyj364LzgVKlVLFNPOcV1Ybc
 {
   "text": "hello, there!"
 }
+
+### Set friend
+PUT {{host}}/api/v1/friend/set/d06ff731-f291-4703-8010-a53c62be5d2b
+Content-Type: application/json
+Authorization: Bearer v4.local.2w-1XbhJshuutel46NHJ1jl5BMyj364LzgVKlVLFNPOcV1YbcfAbCXUW9FYVHnt7jHjBLL-Gv3sVmqYvlRBP_WL-_zOFsYF2Lo8irJfavttnEYiSIT5bPTFsKDyfe2PjWXEZty3c_FU9hfmvmYSm_4rzMdwQmlk5frXZFTt31jFbRzasTi7ckTPLnWx7LrAdeUufahmABO7XOTD79VoHdoTrPgLmB-GL124xOSxe-jwjO7n93dEFXlcedp8mIHD2ZbeRE91_LYDU
+
+
+### Delete friend
+PUT {{host}}/api/v1/friend/delete/d06ff731-f291-4703-8010-a53c62be5d2b
+Content-Type: application/json
+Authorization: Bearer v4.local.2w-1XbhJshuutel46NHJ1jl5BMyj364LzgVKlVLFNPOcV1YbcfAbCXUW9FYVHnt7jHjBLL-Gv3sVmqYvlRBP_WL-_zOFsYF2Lo8irJfavttnEYiSIT5bPTFsKDyfe2PjWXEZty3c_FU9hfmvmYSm_4rzMdwQmlk5frXZFTt31jFbRzasTi7ckTPLnWx7LrAdeUufahmABO7XOTD79VoHdoTrPgLmB-GL124xOSxe-jwjO7n93dEFXlcedp8mIHD2ZbeRE91_LYDU

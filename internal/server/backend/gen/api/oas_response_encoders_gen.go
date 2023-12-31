@@ -467,7 +467,7 @@ func encodePostCreatePostResponse(response PostCreatePostRes, w http.ResponseWri
 
 		return nil
 
-	case *PostCreatePostServiceUnavailable:
+	case *PostCreatePostInternalServerError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
@@ -511,7 +511,7 @@ func encodePostCreatePostResponse(response PostCreatePostRes, w http.ResponseWri
 		}
 		return nil
 
-	case *PostCreatePostInternalServerError:
+	case *PostCreatePostServiceUnavailable:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
@@ -700,7 +700,7 @@ func encodePostFeedGetResponse(response PostFeedGetRes, w http.ResponseWriter, s
 
 		return nil
 
-	case *PostFeedGetInternalServerError:
+	case *PostFeedGetServiceUnavailable:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
@@ -744,7 +744,7 @@ func encodePostFeedGetResponse(response PostFeedGetRes, w http.ResponseWriter, s
 		}
 		return nil
 
-	case *PostFeedGetServiceUnavailable:
+	case *PostFeedGetInternalServerError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{

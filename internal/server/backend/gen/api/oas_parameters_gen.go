@@ -17,7 +17,8 @@ import (
 
 // FriendDeleteUserIDPutParams is parameters of PUT /friend/delete/{user_id} operation.
 type FriendDeleteUserIDPutParams struct {
-	UserID UserId
+	UserID    UserId
+	XScUserID string
 }
 
 func unpackFriendDeleteUserIDPutParams(packed middleware.Parameters) (params FriendDeleteUserIDPutParams) {
@@ -28,10 +29,18 @@ func unpackFriendDeleteUserIDPutParams(packed middleware.Parameters) (params Fri
 		}
 		params.UserID = packed[key].(UserId)
 	}
+	{
+		key := middleware.ParameterKey{
+			Name: "X-Sc-User-Id",
+			In:   "header",
+		}
+		params.XScUserID = packed[key].(string)
+	}
 	return params
 }
 
 func decodeFriendDeleteUserIDPutParams(args [1]string, argsEscaped bool, r *http.Request) (params FriendDeleteUserIDPutParams, _ error) {
+	h := uri.NewHeaderDecoder(r.Header)
 	// Decode path: user_id.
 	if err := func() error {
 		param := args[0]
@@ -84,12 +93,47 @@ func decodeFriendDeleteUserIDPutParams(args [1]string, argsEscaped bool, r *http
 			Err:  err,
 		}
 	}
+	// Decode header: X-Sc-User-Id.
+	if err := func() error {
+		cfg := uri.HeaderParameterDecodingConfig{
+			Name:    "X-Sc-User-Id",
+			Explode: false,
+		}
+		if err := h.HasParam(cfg); err == nil {
+			if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToString(val)
+				if err != nil {
+					return err
+				}
+
+				params.XScUserID = c
+				return nil
+			}); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "X-Sc-User-Id",
+			In:   "header",
+			Err:  err,
+		}
+	}
 	return params, nil
 }
 
 // FriendSetUserIDPutParams is parameters of PUT /friend/set/{user_id} operation.
 type FriendSetUserIDPutParams struct {
-	UserID UserId
+	UserID    UserId
+	XScUserID string
 }
 
 func unpackFriendSetUserIDPutParams(packed middleware.Parameters) (params FriendSetUserIDPutParams) {
@@ -100,10 +144,18 @@ func unpackFriendSetUserIDPutParams(packed middleware.Parameters) (params Friend
 		}
 		params.UserID = packed[key].(UserId)
 	}
+	{
+		key := middleware.ParameterKey{
+			Name: "X-Sc-User-Id",
+			In:   "header",
+		}
+		params.XScUserID = packed[key].(string)
+	}
 	return params
 }
 
 func decodeFriendSetUserIDPutParams(args [1]string, argsEscaped bool, r *http.Request) (params FriendSetUserIDPutParams, _ error) {
+	h := uri.NewHeaderDecoder(r.Header)
 	// Decode path: user_id.
 	if err := func() error {
 		param := args[0]
@@ -153,6 +205,40 @@ func decodeFriendSetUserIDPutParams(args [1]string, argsEscaped bool, r *http.Re
 		return params, &ogenerrors.DecodeParamError{
 			Name: "user_id",
 			In:   "path",
+			Err:  err,
+		}
+	}
+	// Decode header: X-Sc-User-Id.
+	if err := func() error {
+		cfg := uri.HeaderParameterDecodingConfig{
+			Name:    "X-Sc-User-Id",
+			Explode: false,
+		}
+		if err := h.HasParam(cfg); err == nil {
+			if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToString(val)
+				if err != nil {
+					return err
+				}
+
+				params.XScUserID = c
+				return nil
+			}); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "X-Sc-User-Id",
+			In:   "header",
 			Err:  err,
 		}
 	}

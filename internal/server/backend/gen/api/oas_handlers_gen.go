@@ -214,6 +214,10 @@ func (s *Server) handleFriendDeleteUserIDPutRequest(args [1]string, argsEscaped 
 					Name: "user_id",
 					In:   "path",
 				}: params.UserID,
+				{
+					Name: "X-Sc-User-Id",
+					In:   "header",
+				}: params.XScUserID,
 			},
 			Raw: r,
 		}
@@ -317,6 +321,10 @@ func (s *Server) handleFriendSetUserIDPutRequest(args [1]string, argsEscaped boo
 					Name: "user_id",
 					In:   "path",
 				}: params.UserID,
+				{
+					Name: "X-Sc-User-Id",
+					In:   "header",
+				}: params.XScUserID,
 			},
 			Raw: r,
 		}
