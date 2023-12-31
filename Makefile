@@ -13,12 +13,15 @@ gen:
 
 .PHONY: up
 up:
-	docker compose up --remove-orphans
+	docker compose up -d --remove-orphans
 down:
 	docker compose down
 
 up-full:
 	docker compose --file docker-compose.yc.yml up -d --remove-orphans
+
+up-replication:
+	docker compose --file=docker-compose.replication.yml up -d
 
 run-migrations:
 	GOOSE_DRIVER=postgres \

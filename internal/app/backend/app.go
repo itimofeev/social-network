@@ -17,14 +17,16 @@ type Repository interface {
 }
 
 type Config struct {
-	PGRepository Repository `validate:"required"`
+	PGRepository        Repository `validate:"required"`
+	PGReplicaRepository Repository `validate:"required"`
 
 	PasetoSecretKey string `validate:"required"`
 }
 
 type App struct {
-	repo      Repository
-	secretKey paseto.V4SymmetricKey
+	repo        Repository
+	repoReplica Repository
+	secretKey   paseto.V4SymmetricKey
 }
 
 func New(cfg Config) (*App, error) {
@@ -38,7 +40,8 @@ func New(cfg Config) (*App, error) {
 	}
 
 	return &App{
-		repo:      cfg.PGRepository,
-		secretKey: secretKey,
+		repo:        cfg.PGRepository,
+		repoReplica: cfg.PGReplicaRepository,
+		secretKey:   secretKey,
 	}, nil
 }

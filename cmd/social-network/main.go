@@ -27,7 +27,8 @@ type configuration struct {
 
 	SessionSecretKey string `envconfig:"SESSION_SECRET_KEY" default:"5468ac74e23ea5c297413a3020af91601f22c82e77aa89cca4e8fb4ec28fb300"` // this have to be passed from secured store like vault in production env
 
-	PGRepositoryDSN string `envconfig:"PG_REPOSITORY_DSN" required:"true"`
+	PGRepositoryDSN        string `envconfig:"PG_REPOSITORY_DSN" required:"true"`
+	PGRepositoryReplicaDSN string `envconfig:"PG_REPOSITORY_REPLICA_DSN" required:"true"`
 }
 
 func main() {
@@ -55,9 +56,18 @@ func run(ctx context.Context, cfg configuration) error {
 		return err
 	}
 
+	pgReplicaRepo, err := pg.New(ctx, pg.Config{
+		DSN:          cfg.PGRepositoryReplicaDSN,
+		MaxOpenConns: 10,
+	})
+	if err != nil {
+		return err
+	}
+
 	application, err := backendApp.New(backendApp.Config{
-		PGRepository:    pgRepo,
-		PasetoSecretKey: cfg.SessionSecretKey,
+		PGRepository:        pgRepo,
+		PGReplicaRepository: pgReplicaRepo,
+		PasetoSecretKey:     cfg.SessionSecretKey,
 	})
 	if err != nil {
 		return err

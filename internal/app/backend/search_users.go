@@ -7,5 +7,5 @@ import (
 )
 
 func (a *App) SearchUsers(ctx context.Context, firstName string, lastName string) ([]entity.User, error) {
-	return a.repo.SearchUsers(ctx, firstName, lastName)
+	return a.repoReplica.SearchUsers(ctx, firstName, lastName)
 }

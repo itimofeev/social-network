@@ -6,9 +6,14 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"log/slog"
 	"os"
+	"os/signal"
 	"strconv"
 	"strings"
+	"sync"
+	"sync/atomic"
+	"syscall"
 
 	"github.com/go-faster/errors"
 
@@ -23,8 +28,11 @@ func main() {
 }
 
 func run() error {
-	repo, err := pg.New(context.Background(), pg.Config{
-		DSN: os.Getenv("PG_REPOSITORY_DSN"),
+	ctx := signalContext(context.Background())
+
+	repo, err := pg.New(ctx, pg.Config{
+		DSN:          os.Getenv("PG_REPOSITORY_DSN"),
+		MaxOpenConns: 10,
 	})
 
 	if err != nil {
@@ -36,7 +44,7 @@ func run() error {
 		return fmt.Errorf("failed to open file: %w", err)
 	}
 
-	var profiles = []entity.Profile{}
+	var profiles []entity.Profile
 	csvReader := csv.NewReader(f)
 
 	for {
@@ -67,5 +75,45 @@ func run() error {
 
 	fmt.Println("loaded profiles:", len(profiles))
 
-	return repo.InsertProfiles(context.Background(), profiles)
+	totalInserted := atomic.Int64{}
+	wg := sync.WaitGroup{}
+
+	for i := 0; i < 2; i++ {
+		wg.Add(1)
+		go func(workerNumber int) {
+			defer wg.Done()
+			for j := 0; j < len(profiles); j++ {
+				if err := repo.InsertProfiles(ctx, []entity.Profile{profiles[j]}); err != nil {
+					slog.Info("error on inserting profile", "worker", workerNumber, "profile", j, "error", err)
+					return
+				}
+
+				if newInserted := totalInserted.Add(1); newInserted%1000 == 0 {
+					slog.Info("inserted profiles", "inserted", newInserted)
+				}
+			}
+		}(i)
+	}
+
+	wg.Wait()
+
+	slog.Info("inserting of profiles finished", "inserted", totalInserted.Load())
+
+	return nil
+}
+
+// signalContext returns a context that is canceled if either SIGTERM or SIGINT signal is received.
+func signalContext(ctx context.Context) context.Context {
+	cnCtx, cancel := context.WithCancel(ctx)
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, syscall.SIGTERM, syscall.SIGINT)
+
+	go func() {
+		sig := <-c
+		slog.InfoContext(ctx, "received signal", sig)
+		cancel()
+	}()
+
+	return cnCtx
 }
