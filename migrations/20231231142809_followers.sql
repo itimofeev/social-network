@@ -7,6 +7,11 @@ CREATE TABLE followers
     PRIMARY KEY (user_id, follows_user_id),
     CHECK ( user_id <> followers.follows_user_id )
 );
+
+CREATE INDEX followers_follows_user_id_index
+    ON followers (follows_user_id);
+
+
 -- +goose StatementEnd
 
 -- +goose Down

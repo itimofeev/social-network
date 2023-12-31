@@ -103,6 +103,18 @@ services:
     volumes:
       - "./tools/traefik/config.yml:/etc/traefik/dynamic-traefik.yaml:ro"
 
+# redis://<user>:<pass>@localhost:6379/<db>
+  redis:
+    image: redis:7.2.3
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-db:/root/redis
+    environment:
+      - REDIS_PORT=6379
+      - REDIS_DATABASES=16
 volumes:
   postgres-db:
   mongo-db:
+  redis-db:

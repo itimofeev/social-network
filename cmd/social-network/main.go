@@ -29,6 +29,8 @@ type configuration struct {
 
 	PGRepositoryDSN        string `envconfig:"PG_REPOSITORY_DSN" required:"true"`
 	PGRepositoryReplicaDSN string `envconfig:"PG_REPOSITORY_REPLICA_DSN" required:"true"`
+
+	RedisDSN string `envconfig:"REDIS_REPOSITORY_DSN" default:"redis://localhost:6379/sc"`
 }
 
 func main() {
