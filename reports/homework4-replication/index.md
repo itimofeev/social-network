@@ -184,7 +184,7 @@ exit;
 
 Убеждаемся, что реплика стала синхронной
 
-docker exec -it pgmaster su - postgres -c psql
+docker exec -it social-network-db-1 psql -U admin social-network
 select application_name, sync_state from pg_stat_replication;
 exit;
 
@@ -194,3 +194,7 @@ application_name | sync_state
 pgasync          | potential
 pgsync           | sync
 (2 rows)
+
+
+
+docker kill --signal=9 social-network-db-1

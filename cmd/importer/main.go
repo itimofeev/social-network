@@ -78,7 +78,7 @@ func run() error {
 	totalInserted := atomic.Int64{}
 	wg := sync.WaitGroup{}
 
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 2; i++ {
 		wg.Add(1)
 		go func(workerNumber int) {
 			defer wg.Done()
