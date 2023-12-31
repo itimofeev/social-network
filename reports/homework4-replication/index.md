@@ -141,60 +141,40 @@ e8531f7bd5ac   social-network-db-async-1   7.21%     175.6MiB / 7.668GiB   2.24%
 
 
 ## Отчёт 2. Возможная потеря транзакций в асинхронной реплике и отсутствие потерь в синхронной
-скопируем бэкап
+Запустим docker-compose.replication.yml, в котором запускается pgmaster и две реплики pgsync и pgasync.
+В команде запуска мастера указаны настройки:
+```
+-c synchronous_commit=on
+-c synchronous_standby_names='pgsync'
+```
+которые говорят, что pgsync реплика является синхронной.
 
-docker cp social-network-db-1:/pgasync tools/data/volumes/pgsync/
-
-изменим настройки pgsync/postgresql.conf
-
-primary_conninfo = 'host=db port=5432 user=replicator password=pass application_name=pgasyncslave'
-дадим знать что это реплика
-
-touch tools/data/volumes/pgsync/standby.signal
-запустим реплику pgsync
-docker compose up
-
-
-Убеждаемся что обе реплики работают в асинхронном режиме на pgmaster
-
-docker exec -it social-network-db-1 psql -U admin social-network
-select application_name, sync_state from pg_stat_replication;
-exit;
-
+Запросом на мастер проверяем, что реплики имеют корректные настройки:
+```
 social-network=# select application_name, sync_state from pg_stat_replication;
 application_name | sync_state
 ------------------+------------
 pgasync          | async
-pgsync           | async
-(2 rows)
-
-
-
-Включаем синхронную репликацию на pgmaster
-
-меняем файл pgmaster/postgresql.conf
-
-synchronous_commit = on
-synchronous_standby_names = 'FIRST 1 (pgslave, pgasyncslave)'
-перечитываем конфиг
-
-docker exec -it social-network-db-1 psql -U admin social-network
-select pg_reload_conf();
-exit;
-
-Убеждаемся, что реплика стала синхронной
-
-docker exec -it social-network-db-1 psql -U admin social-network
-select application_name, sync_state from pg_stat_replication;
-exit;
-
-social-network=# select application_name, sync_state from pg_stat_replication;
-application_name | sync_state
-------------------+------------
-pgasync          | potential
 pgsync           | sync
 (2 rows)
+```
 
+Дальше запускаем пишущую нагрузку в табличку users. Через некоторое время убиваем pgmaster командой `docker kill --signal=9 social-network-pgmaster-1`.
 
+Проверяем количество записей в табличке users `select count(1) from users;` на pgsync:
+2684
 
-docker kill --signal=9 social-network-db-1
+На pgasync: 2684.
+
+Эксперимент показал, что количество вставленных записей одинаковое в синхронной и асинхронной реплике, хотя мы ожидали, что в асинхронной будут потери.
+
+Оказалось, что процесс перекачки WAL в реплики работает очень быстро! И в режиме, когда все контейнеры запущены на одной машине и благодаря этому имеют супер быструю сеть, воспроизвести ситуацию с потерей транзакций очень сложно.
+
+Поэтому пришлось прибегнуть к утилите tc для выставления сетевых задержек контейнеру pgasync.
+```bash
+docker exec --user=root social-network-pgasync-1 tc qdisc add dev eth0 root netem delay 200ms
+```
+Повторив эксперимент можно видеть, что в реплике async записей значительно меньше, т.к. из-за задержек репликация не успевала переносить изменения на реплику.
+Если же выставить задержки на контейнере pgsync, то потерей транзакций по сравнению с мастером не будет, просто значительно снизится пропускная способность pgmaster из-за ожидания применний изменний на синхронной реплике.
+
+Это учебный эксперимент и в реальной сети задержки могут быть выше. Так же может просто не повести и мастер взорвётся, не успев передать изменения реплике, что так же приведёт к потере транзакций.

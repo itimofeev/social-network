@@ -47,8 +47,8 @@ services:
       -c max_wal_senders=10 
       -c max_replication_slots=10 
       -c hot_standby_feedback=on
-#      -c synchronous_commit=on
-#      -c synchronous_standby_names='pgsync'
+      -c synchronous_commit=on
+      -c synchronous_standby_names='pgsync'
     volumes:
       - ./tools/00_init.sql:/docker-entrypoint-initdb.d/00_init.sql
 
@@ -77,30 +77,30 @@ services:
     depends_on:
       - pgmaster
 
-#  pgsync:
-#    <<: *postgres-common
-#    ports:
-#      - 5434:5432
-#    environment:
-#      PGUSER: replicator
-#      PGPASSWORD: replicator_password
-#    command: |
-#      bash -c "
-#
-#      until pg_basebackup --pgdata=/var/lib/postgresql/data -R --slot=replication_slot_sync --host=pgmaster --port=5432 | true
-#      do
-#        echo 'Waiting for primary to connect...'
-#        sleep 1s
-#      done
-#      echo 'Backup done, starting replica...'
-#      chmod 0700 /var/lib/postgresql/data
-#
-#      sed -i 's/target_session_attrs=any/target_session_attrs=any application_name=pgsync/g' /var/lib/postgresql/data/postgresql.auto.conf
-#
-#      postgres
-#      "
-#    depends_on:
-#      - pgmaster
+  pgsync:
+    <<: *postgres-common
+    ports:
+      - 5434:5432
+    environment:
+      PGUSER: replicator
+      PGPASSWORD: replicator_password
+    command: |
+      bash -c "
+
+      until pg_basebackup --pgdata=/var/lib/postgresql/data -R --slot=replication_slot_sync --host=pgmaster --port=5432 | true
+      do
+        echo 'Waiting for primary to connect...'
+        sleep 1s
+      done
+      echo 'Backup done, starting replica...'
+      chmod 0700 /var/lib/postgresql/data
+
+      sed -i 's/target_session_attrs=any/target_session_attrs=any application_name=pgsync/g' /var/lib/postgresql/data/postgresql.auto.conf
+
+      postgres
+      "
+    depends_on:
+      - pgmaster
 
 
 networks:
@@ -108,7 +108,4 @@ networks:
 
 
 #    docker exec -it --user=root social-network-pgasync-1 apk add iproute2
-#   docker exec --user=root social-network-pgasync-1 tc qdisc add dev eth0 root netem delay 200ms
-
-#    docker exec -it --user=root social-network-pgsync-1 apk add iproute2
-#   docker exec --user=root social-network-pgsync-1 tc qdisc add dev eth0 root netem delay 200ms
+#   docker exec --user=root social-network-pgasync-1 tc qdisc add dev eth0 root netem delay 1000ms

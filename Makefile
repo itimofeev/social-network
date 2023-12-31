@@ -20,6 +20,9 @@ down:
 up-full:
 	docker compose --file docker-compose.yc.yml up -d --remove-orphans
 
+up-replication:
+	docker compose --file=docker-compose.replication.yml up -d
+
 run-migrations:
 	GOOSE_DRIVER=postgres \
 	GOOSE_DBSTRING=postgres://admin:admin@127.0.0.1:5432/social-network?sslmode=disable \
