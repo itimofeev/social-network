@@ -159,7 +159,7 @@ pgsync           | sync
 (2 rows)
 ```
 
-Дальше запускаем пишущую нагрузку в табличку users. Через некоторое время убиваем pgmaster командой `docker kill --signal=9 social-network-pgmaster-1`.
+Дальше запускаем пишущую нагрузку в табличку users через бинарник /cmd/importer/main.go. Через некоторое время убиваем pgmaster командой `docker kill --signal=9 social-network-pgmaster-1`.
 
 Проверяем количество записей в табличке users `select count(1) from users;` на pgsync:
 2684
