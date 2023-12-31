@@ -17,6 +17,7 @@ type Repository interface {
 	SearchUsers(ctx context.Context, firstName string, lastName string) ([]entity.User, error)
 	DeleteFollower(ctx context.Context, userID uuid.UUID, followUserID uuid.UUID) error
 	SetFollower(ctx context.Context, userID uuid.UUID, followUserID uuid.UUID) error
+	CreatePost(ctx context.Context, id uuid.UUID, text string) (string, error)
 }
 
 type Config struct {

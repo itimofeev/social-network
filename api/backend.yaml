@@ -189,7 +189,14 @@ paths:
           $ref: '#/components/responses/5xx'
   /post/create:
     post:
+      parameters:
+        - name: X-Sc-User-Id
+          schema:
+            type: string
+          required: true
+          in: header
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -216,7 +223,14 @@ paths:
           $ref: '#/components/responses/5xx'
   /post/update:
     put:
+      parameters:
+        - name: X-Sc-User-Id
+          schema:
+            type: string
+          required: true
+          in: header
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -248,6 +262,11 @@ paths:
             $ref: '#/components/schemas/PostId'
           required: true
           in: path
+        - name: X-Sc-User-Id
+          schema:
+            type: string
+          required: true
+          in: header
       responses:
         '200':
           description: Успешно удален пост
@@ -267,6 +286,11 @@ paths:
             $ref: '#/components/schemas/PostId'
           required: true
           in: path
+        - name: X-Sc-User-Id
+          schema:
+            type: string
+          required: true
+          in: header
       responses:
         '200':
           description: Успешно получен пост

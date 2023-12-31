@@ -308,52 +308,6 @@ func (o OptLoginPostReq) Or(d LoginPostReq) LoginPostReq {
 	return d
 }
 
-// NewOptPostCreatePostReq returns new OptPostCreatePostReq with value set to v.
-func NewOptPostCreatePostReq(v PostCreatePostReq) OptPostCreatePostReq {
-	return OptPostCreatePostReq{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptPostCreatePostReq is optional PostCreatePostReq.
-type OptPostCreatePostReq struct {
-	Value PostCreatePostReq
-	Set   bool
-}
-
-// IsSet returns true if OptPostCreatePostReq was set.
-func (o OptPostCreatePostReq) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptPostCreatePostReq) Reset() {
-	var v PostCreatePostReq
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptPostCreatePostReq) SetTo(v PostCreatePostReq) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptPostCreatePostReq) Get() (v PostCreatePostReq, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptPostCreatePostReq) Or(d PostCreatePostReq) PostCreatePostReq {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptPostId returns new OptPostId with value set to v.
 func NewOptPostId(v PostId) OptPostId {
 	return OptPostId{
@@ -440,52 +394,6 @@ func (o OptPostText) Get() (v PostText, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptPostText) Or(d PostText) PostText {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptPostUpdatePutReq returns new OptPostUpdatePutReq with value set to v.
-func NewOptPostUpdatePutReq(v PostUpdatePutReq) OptPostUpdatePutReq {
-	return OptPostUpdatePutReq{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptPostUpdatePutReq is optional PostUpdatePutReq.
-type OptPostUpdatePutReq struct {
-	Value PostUpdatePutReq
-	Set   bool
-}
-
-// IsSet returns true if OptPostUpdatePutReq was set.
-func (o OptPostUpdatePutReq) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptPostUpdatePutReq) Reset() {
-	var v PostUpdatePutReq
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptPostUpdatePutReq) SetTo(v PostUpdatePutReq) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptPostUpdatePutReq) Get() (v PostUpdatePutReq, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptPostUpdatePutReq) Or(d PostUpdatePutReq) PostUpdatePutReq {
 	if v, ok := o.Get(); ok {
 		return v
 	}

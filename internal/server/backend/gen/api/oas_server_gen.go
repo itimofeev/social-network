@@ -31,7 +31,7 @@ type Handler interface {
 	// PostCreatePost implements POST /post/create operation.
 	//
 	// POST /post/create
-	PostCreatePost(ctx context.Context, req OptPostCreatePostReq) (PostCreatePostRes, error)
+	PostCreatePost(ctx context.Context, req *PostCreatePostReq, params PostCreatePostParams) (PostCreatePostRes, error)
 	// PostDeleteIDPut implements PUT /post/delete/{id} operation.
 	//
 	// PUT /post/delete/{id}
@@ -47,7 +47,7 @@ type Handler interface {
 	// PostUpdatePut implements PUT /post/update operation.
 	//
 	// PUT /post/update
-	PostUpdatePut(ctx context.Context, req OptPostUpdatePutReq) (PostUpdatePutRes, error)
+	PostUpdatePut(ctx context.Context, req *PostUpdatePutReq, params PostUpdatePutParams) (PostUpdatePutRes, error)
 	// UserGetIDGet implements GET /user/get/{id} operation.
 	//
 	// Получение анкеты пользователя.

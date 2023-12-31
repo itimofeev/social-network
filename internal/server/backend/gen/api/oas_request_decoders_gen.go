@@ -83,7 +83,7 @@ func (s *Server) decodeLoginPostRequest(r *http.Request) (
 }
 
 func (s *Server) decodePostCreatePostRequest(r *http.Request) (
-	req OptPostCreatePostReq,
+	req *PostCreatePostReq,
 	close func() error,
 	rerr error,
 ) {
@@ -102,9 +102,6 @@ func (s *Server) decodePostCreatePostRequest(r *http.Request) (
 			rerr = multierr.Append(rerr, close())
 		}
 	}()
-	if _, ok := r.Header["Content-Type"]; !ok && r.ContentLength == 0 {
-		return req, close, nil
-	}
 	ct, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
 	if err != nil {
 		return req, close, errors.Wrap(err, "parse media type")
@@ -112,7 +109,7 @@ func (s *Server) decodePostCreatePostRequest(r *http.Request) (
 	switch {
 	case ct == "application/json":
 		if r.ContentLength == 0 {
-			return req, close, nil
+			return req, close, validate.ErrBodyRequired
 		}
 		buf, err := io.ReadAll(r.Body)
 		if err != nil {
@@ -120,14 +117,13 @@ func (s *Server) decodePostCreatePostRequest(r *http.Request) (
 		}
 
 		if len(buf) == 0 {
-			return req, close, nil
+			return req, close, validate.ErrBodyRequired
 		}
 
 		d := jx.DecodeBytes(buf)
 
-		var request OptPostCreatePostReq
+		var request PostCreatePostReq
 		if err := func() error {
-			request.Reset()
 			if err := request.Decode(d); err != nil {
 				return err
 			}
@@ -143,14 +139,14 @@ func (s *Server) decodePostCreatePostRequest(r *http.Request) (
 			}
 			return req, close, err
 		}
-		return request, close, nil
+		return &request, close, nil
 	default:
 		return req, close, validate.InvalidContentType(ct)
 	}
 }
 
 func (s *Server) decodePostUpdatePutRequest(r *http.Request) (
-	req OptPostUpdatePutReq,
+	req *PostUpdatePutReq,
 	close func() error,
 	rerr error,
 ) {
@@ -169,9 +165,6 @@ func (s *Server) decodePostUpdatePutRequest(r *http.Request) (
 			rerr = multierr.Append(rerr, close())
 		}
 	}()
-	if _, ok := r.Header["Content-Type"]; !ok && r.ContentLength == 0 {
-		return req, close, nil
-	}
 	ct, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
 	if err != nil {
 		return req, close, errors.Wrap(err, "parse media type")
@@ -179,7 +172,7 @@ func (s *Server) decodePostUpdatePutRequest(r *http.Request) (
 	switch {
 	case ct == "application/json":
 		if r.ContentLength == 0 {
-			return req, close, nil
+			return req, close, validate.ErrBodyRequired
 		}
 		buf, err := io.ReadAll(r.Body)
 		if err != nil {
@@ -187,14 +180,13 @@ func (s *Server) decodePostUpdatePutRequest(r *http.Request) (
 		}
 
 		if len(buf) == 0 {
-			return req, close, nil
+			return req, close, validate.ErrBodyRequired
 		}
 
 		d := jx.DecodeBytes(buf)
 
-		var request OptPostUpdatePutReq
+		var request PostUpdatePutReq
 		if err := func() error {
-			request.Reset()
 			if err := request.Decode(d); err != nil {
 				return err
 			}
@@ -210,7 +202,7 @@ func (s *Server) decodePostUpdatePutRequest(r *http.Request) (
 			}
 			return req, close, err
 		}
-		return request, close, nil
+		return &request, close, nil
 	default:
 		return req, close, validate.InvalidContentType(ct)
 	}

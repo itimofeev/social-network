@@ -48,7 +48,7 @@ func (UnimplementedHandler) LoginPost(ctx context.Context, req OptLoginPostReq) 
 // PostCreatePost implements POST /post/create operation.
 //
 // POST /post/create
-func (UnimplementedHandler) PostCreatePost(ctx context.Context, req OptPostCreatePostReq) (r PostCreatePostRes, _ error) {
+func (UnimplementedHandler) PostCreatePost(ctx context.Context, req *PostCreatePostReq, params PostCreatePostParams) (r PostCreatePostRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -76,7 +76,7 @@ func (UnimplementedHandler) PostGetIDGet(ctx context.Context, params PostGetIDGe
 // PostUpdatePut implements PUT /post/update operation.
 //
 // PUT /post/update
-func (UnimplementedHandler) PostUpdatePut(ctx context.Context, req OptPostUpdatePutReq) (r PostUpdatePutRes, _ error) {
+func (UnimplementedHandler) PostUpdatePut(ctx context.Context, req *PostUpdatePutReq, params PostUpdatePutParams) (r PostUpdatePutRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

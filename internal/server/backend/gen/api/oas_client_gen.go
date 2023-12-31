@@ -46,7 +46,7 @@ type Invoker interface {
 	// PostCreatePost invokes POST /post/create operation.
 	//
 	// POST /post/create
-	PostCreatePost(ctx context.Context, request OptPostCreatePostReq) (PostCreatePostRes, error)
+	PostCreatePost(ctx context.Context, request *PostCreatePostReq, params PostCreatePostParams) (PostCreatePostRes, error)
 	// PostDeleteIDPut invokes PUT /post/delete/{id} operation.
 	//
 	// PUT /post/delete/{id}
@@ -62,7 +62,7 @@ type Invoker interface {
 	// PostUpdatePut invokes PUT /post/update operation.
 	//
 	// PUT /post/update
-	PostUpdatePut(ctx context.Context, request OptPostUpdatePutReq) (PostUpdatePutRes, error)
+	PostUpdatePut(ctx context.Context, request *PostUpdatePutReq, params PostUpdatePutParams) (PostUpdatePutRes, error)
 	// UserGetIDGet invokes GET /user/get/{id} operation.
 	//
 	// Получение анкеты пользователя.
@@ -522,12 +522,12 @@ func (c *Client) sendLoginPost(ctx context.Context, request OptLoginPostReq) (re
 // PostCreatePost invokes POST /post/create operation.
 //
 // POST /post/create
-func (c *Client) PostCreatePost(ctx context.Context, request OptPostCreatePostReq) (PostCreatePostRes, error) {
-	res, err := c.sendPostCreatePost(ctx, request)
+func (c *Client) PostCreatePost(ctx context.Context, request *PostCreatePostReq, params PostCreatePostParams) (PostCreatePostRes, error) {
+	res, err := c.sendPostCreatePost(ctx, request, params)
 	return res, err
 }
 
-func (c *Client) sendPostCreatePost(ctx context.Context, request OptPostCreatePostReq) (res PostCreatePostRes, err error) {
+func (c *Client) sendPostCreatePost(ctx context.Context, request *PostCreatePostReq, params PostCreatePostParams) (res PostCreatePostRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		semconv.HTTPMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/post/create"),
@@ -573,6 +573,20 @@ func (c *Client) sendPostCreatePost(ctx context.Context, request OptPostCreatePo
 	}
 	if err := encodePostCreatePostRequest(request, r); err != nil {
 		return res, errors.Wrap(err, "encode request")
+	}
+
+	stage = "EncodeHeaderParams"
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "X-Sc-User-Id",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.XScUserID))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
 	}
 
 	stage = "SendRequest"
@@ -663,6 +677,20 @@ func (c *Client) sendPostDeleteIDPut(ctx context.Context, params PostDeleteIDPut
 	r, err := ht.NewRequest(ctx, "PUT", u)
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "EncodeHeaderParams"
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "X-Sc-User-Id",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.XScUserID))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
 	}
 
 	stage = "SendRequest"
@@ -862,6 +890,20 @@ func (c *Client) sendPostGetIDGet(ctx context.Context, params PostGetIDGetParams
 		return res, errors.Wrap(err, "create request")
 	}
 
+	stage = "EncodeHeaderParams"
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "X-Sc-User-Id",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.XScUserID))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
+	}
+
 	stage = "SendRequest"
 	resp, err := c.cfg.Client.Do(r)
 	if err != nil {
@@ -881,12 +923,12 @@ func (c *Client) sendPostGetIDGet(ctx context.Context, params PostGetIDGetParams
 // PostUpdatePut invokes PUT /post/update operation.
 //
 // PUT /post/update
-func (c *Client) PostUpdatePut(ctx context.Context, request OptPostUpdatePutReq) (PostUpdatePutRes, error) {
-	res, err := c.sendPostUpdatePut(ctx, request)
+func (c *Client) PostUpdatePut(ctx context.Context, request *PostUpdatePutReq, params PostUpdatePutParams) (PostUpdatePutRes, error) {
+	res, err := c.sendPostUpdatePut(ctx, request, params)
 	return res, err
 }
 
-func (c *Client) sendPostUpdatePut(ctx context.Context, request OptPostUpdatePutReq) (res PostUpdatePutRes, err error) {
+func (c *Client) sendPostUpdatePut(ctx context.Context, request *PostUpdatePutReq, params PostUpdatePutParams) (res PostUpdatePutRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		semconv.HTTPMethodKey.String("PUT"),
 		semconv.HTTPRouteKey.String("/post/update"),
@@ -932,6 +974,20 @@ func (c *Client) sendPostUpdatePut(ctx context.Context, request OptPostUpdatePut
 	}
 	if err := encodePostUpdatePutRequest(request, r); err != nil {
 		return res, errors.Wrap(err, "encode request")
+	}
+
+	stage = "EncodeHeaderParams"
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "X-Sc-User-Id",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.XScUserID))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
 	}
 
 	stage = "SendRequest"

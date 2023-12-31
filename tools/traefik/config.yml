@@ -19,6 +19,16 @@ http:
       rule: PathPrefix(`/api/v1/friend`)
       priority: 20
 
+    router-backend-post:
+      entryPoints:
+        - web
+      middlewares:
+        - requestid-mw
+        - auth-mw
+      service: backend
+      rule: PathPrefix(`/api/v1/post`)
+      priority: 20
+
     router-dialogs:
       entryPoints:
         - web

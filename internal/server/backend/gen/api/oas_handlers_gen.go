@@ -511,6 +511,16 @@ func (s *Server) handlePostCreatePostRequest(args [0]string, argsEscaped bool, w
 			ID:   "",
 		}
 	)
+	params, err := decodePostCreatePostParams(args, argsEscaped, r)
+	if err != nil {
+		err = &ogenerrors.DecodeParamsError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		recordError("DecodeParams", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
 	request, close, err := s.decodePostCreatePostRequest(r)
 	if err != nil {
 		err = &ogenerrors.DecodeRequestError{
@@ -535,13 +545,18 @@ func (s *Server) handlePostCreatePostRequest(args [0]string, argsEscaped bool, w
 			OperationSummary: "",
 			OperationID:      "",
 			Body:             request,
-			Params:           middleware.Parameters{},
-			Raw:              r,
+			Params: middleware.Parameters{
+				{
+					Name: "X-Sc-User-Id",
+					In:   "header",
+				}: params.XScUserID,
+			},
+			Raw: r,
 		}
 
 		type (
-			Request  = OptPostCreatePostReq
-			Params   = struct{}
+			Request  = *PostCreatePostReq
+			Params   = PostCreatePostParams
 			Response = PostCreatePostRes
 		)
 		response, err = middleware.HookMiddleware[
@@ -551,14 +566,14 @@ func (s *Server) handlePostCreatePostRequest(args [0]string, argsEscaped bool, w
 		](
 			m,
 			mreq,
-			nil,
+			unpackPostCreatePostParams,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.PostCreatePost(ctx, request)
+				response, err = s.h.PostCreatePost(ctx, request, params)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.PostCreatePost(ctx, request)
+		response, err = s.h.PostCreatePost(ctx, request, params)
 	}
 	if err != nil {
 		recordError("Internal", err)
@@ -638,6 +653,10 @@ func (s *Server) handlePostDeleteIDPutRequest(args [1]string, argsEscaped bool, 
 					Name: "id",
 					In:   "path",
 				}: params.ID,
+				{
+					Name: "X-Sc-User-Id",
+					In:   "header",
+				}: params.XScUserID,
 			},
 			Raw: r,
 		}
@@ -848,6 +867,10 @@ func (s *Server) handlePostGetIDGetRequest(args [1]string, argsEscaped bool, w h
 					Name: "id",
 					In:   "path",
 				}: params.ID,
+				{
+					Name: "X-Sc-User-Id",
+					In:   "header",
+				}: params.XScUserID,
 			},
 			Raw: r,
 		}
@@ -927,6 +950,16 @@ func (s *Server) handlePostUpdatePutRequest(args [0]string, argsEscaped bool, w 
 			ID:   "",
 		}
 	)
+	params, err := decodePostUpdatePutParams(args, argsEscaped, r)
+	if err != nil {
+		err = &ogenerrors.DecodeParamsError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		recordError("DecodeParams", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
 	request, close, err := s.decodePostUpdatePutRequest(r)
 	if err != nil {
 		err = &ogenerrors.DecodeRequestError{
@@ -951,13 +984,18 @@ func (s *Server) handlePostUpdatePutRequest(args [0]string, argsEscaped bool, w 
 			OperationSummary: "",
 			OperationID:      "",
 			Body:             request,
-			Params:           middleware.Parameters{},
-			Raw:              r,
+			Params: middleware.Parameters{
+				{
+					Name: "X-Sc-User-Id",
+					In:   "header",
+				}: params.XScUserID,
+			},
+			Raw: r,
 		}
 
 		type (
-			Request  = OptPostUpdatePutReq
-			Params   = struct{}
+			Request  = *PostUpdatePutReq
+			Params   = PostUpdatePutParams
 			Response = PostUpdatePutRes
 		)
 		response, err = middleware.HookMiddleware[
@@ -967,14 +1005,14 @@ func (s *Server) handlePostUpdatePutRequest(args [0]string, argsEscaped bool, w 
 		](
 			m,
 			mreq,
-			nil,
+			unpackPostUpdatePutParams,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.PostUpdatePut(ctx, request)
+				response, err = s.h.PostUpdatePut(ctx, request, params)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.PostUpdatePut(ctx, request)
+		response, err = s.h.PostUpdatePut(ctx, request, params)
 	}
 	if err != nil {
 		recordError("Internal", err)

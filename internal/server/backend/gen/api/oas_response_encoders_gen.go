@@ -227,7 +227,7 @@ func encodeFriendSetUserIDPutResponse(response FriendSetUserIDPutRes, w http.Res
 
 		return nil
 
-	case *FriendSetUserIDPutInternalServerError:
+	case *FriendSetUserIDPutServiceUnavailable:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
@@ -271,7 +271,7 @@ func encodeFriendSetUserIDPutResponse(response FriendSetUserIDPutRes, w http.Res
 		}
 		return nil
 
-	case *FriendSetUserIDPutServiceUnavailable:
+	case *FriendSetUserIDPutInternalServerError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
@@ -580,7 +580,7 @@ func encodePostDeleteIDPutResponse(response PostDeleteIDPutRes, w http.ResponseW
 
 		return nil
 
-	case *PostDeleteIDPutInternalServerError:
+	case *PostDeleteIDPutServiceUnavailable:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
@@ -624,7 +624,7 @@ func encodePostDeleteIDPutResponse(response PostDeleteIDPutRes, w http.ResponseW
 		}
 		return nil
 
-	case *PostDeleteIDPutServiceUnavailable:
+	case *PostDeleteIDPutInternalServerError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
@@ -700,7 +700,7 @@ func encodePostFeedGetResponse(response PostFeedGetRes, w http.ResponseWriter, s
 
 		return nil
 
-	case *PostFeedGetServiceUnavailable:
+	case *PostFeedGetInternalServerError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{
@@ -744,7 +744,7 @@ func encodePostFeedGetResponse(response PostFeedGetRes, w http.ResponseWriter, s
 		}
 		return nil
 
-	case *PostFeedGetInternalServerError:
+	case *PostFeedGetServiceUnavailable:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		// Encoding response headers.
 		{

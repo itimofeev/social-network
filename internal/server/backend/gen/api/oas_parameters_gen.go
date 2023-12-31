@@ -245,9 +245,65 @@ func decodeFriendSetUserIDPutParams(args [1]string, argsEscaped bool, r *http.Re
 	return params, nil
 }
 
+// PostCreatePostParams is parameters of POST /post/create operation.
+type PostCreatePostParams struct {
+	XScUserID string
+}
+
+func unpackPostCreatePostParams(packed middleware.Parameters) (params PostCreatePostParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "X-Sc-User-Id",
+			In:   "header",
+		}
+		params.XScUserID = packed[key].(string)
+	}
+	return params
+}
+
+func decodePostCreatePostParams(args [0]string, argsEscaped bool, r *http.Request) (params PostCreatePostParams, _ error) {
+	h := uri.NewHeaderDecoder(r.Header)
+	// Decode header: X-Sc-User-Id.
+	if err := func() error {
+		cfg := uri.HeaderParameterDecodingConfig{
+			Name:    "X-Sc-User-Id",
+			Explode: false,
+		}
+		if err := h.HasParam(cfg); err == nil {
+			if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToString(val)
+				if err != nil {
+					return err
+				}
+
+				params.XScUserID = c
+				return nil
+			}); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "X-Sc-User-Id",
+			In:   "header",
+			Err:  err,
+		}
+	}
+	return params, nil
+}
+
 // PostDeleteIDPutParams is parameters of PUT /post/delete/{id} operation.
 type PostDeleteIDPutParams struct {
-	ID PostId
+	ID        PostId
+	XScUserID string
 }
 
 func unpackPostDeleteIDPutParams(packed middleware.Parameters) (params PostDeleteIDPutParams) {
@@ -258,10 +314,18 @@ func unpackPostDeleteIDPutParams(packed middleware.Parameters) (params PostDelet
 		}
 		params.ID = packed[key].(PostId)
 	}
+	{
+		key := middleware.ParameterKey{
+			Name: "X-Sc-User-Id",
+			In:   "header",
+		}
+		params.XScUserID = packed[key].(string)
+	}
 	return params
 }
 
 func decodePostDeleteIDPutParams(args [1]string, argsEscaped bool, r *http.Request) (params PostDeleteIDPutParams, _ error) {
+	h := uri.NewHeaderDecoder(r.Header)
 	// Decode path: id.
 	if err := func() error {
 		param := args[0]
@@ -311,6 +375,40 @@ func decodePostDeleteIDPutParams(args [1]string, argsEscaped bool, r *http.Reque
 		return params, &ogenerrors.DecodeParamError{
 			Name: "id",
 			In:   "path",
+			Err:  err,
+		}
+	}
+	// Decode header: X-Sc-User-Id.
+	if err := func() error {
+		cfg := uri.HeaderParameterDecodingConfig{
+			Name:    "X-Sc-User-Id",
+			Explode: false,
+		}
+		if err := h.HasParam(cfg); err == nil {
+			if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToString(val)
+				if err != nil {
+					return err
+				}
+
+				params.XScUserID = c
+				return nil
+			}); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "X-Sc-User-Id",
+			In:   "header",
 			Err:  err,
 		}
 	}
@@ -492,7 +590,8 @@ func decodePostFeedGetParams(args [0]string, argsEscaped bool, r *http.Request) 
 
 // PostGetIDGetParams is parameters of GET /post/get/{id} operation.
 type PostGetIDGetParams struct {
-	ID PostId
+	ID        PostId
+	XScUserID string
 }
 
 func unpackPostGetIDGetParams(packed middleware.Parameters) (params PostGetIDGetParams) {
@@ -503,10 +602,18 @@ func unpackPostGetIDGetParams(packed middleware.Parameters) (params PostGetIDGet
 		}
 		params.ID = packed[key].(PostId)
 	}
+	{
+		key := middleware.ParameterKey{
+			Name: "X-Sc-User-Id",
+			In:   "header",
+		}
+		params.XScUserID = packed[key].(string)
+	}
 	return params
 }
 
 func decodePostGetIDGetParams(args [1]string, argsEscaped bool, r *http.Request) (params PostGetIDGetParams, _ error) {
+	h := uri.NewHeaderDecoder(r.Header)
 	// Decode path: id.
 	if err := func() error {
 		param := args[0]
@@ -556,6 +663,95 @@ func decodePostGetIDGetParams(args [1]string, argsEscaped bool, r *http.Request)
 		return params, &ogenerrors.DecodeParamError{
 			Name: "id",
 			In:   "path",
+			Err:  err,
+		}
+	}
+	// Decode header: X-Sc-User-Id.
+	if err := func() error {
+		cfg := uri.HeaderParameterDecodingConfig{
+			Name:    "X-Sc-User-Id",
+			Explode: false,
+		}
+		if err := h.HasParam(cfg); err == nil {
+			if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToString(val)
+				if err != nil {
+					return err
+				}
+
+				params.XScUserID = c
+				return nil
+			}); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "X-Sc-User-Id",
+			In:   "header",
+			Err:  err,
+		}
+	}
+	return params, nil
+}
+
+// PostUpdatePutParams is parameters of PUT /post/update operation.
+type PostUpdatePutParams struct {
+	XScUserID string
+}
+
+func unpackPostUpdatePutParams(packed middleware.Parameters) (params PostUpdatePutParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "X-Sc-User-Id",
+			In:   "header",
+		}
+		params.XScUserID = packed[key].(string)
+	}
+	return params
+}
+
+func decodePostUpdatePutParams(args [0]string, argsEscaped bool, r *http.Request) (params PostUpdatePutParams, _ error) {
+	h := uri.NewHeaderDecoder(r.Header)
+	// Decode header: X-Sc-User-Id.
+	if err := func() error {
+		cfg := uri.HeaderParameterDecodingConfig{
+			Name:    "X-Sc-User-Id",
+			Explode: false,
+		}
+		if err := h.HasParam(cfg); err == nil {
+			if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToString(val)
+				if err != nil {
+					return err
+				}
+
+				params.XScUserID = c
+				return nil
+			}); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "X-Sc-User-Id",
+			In:   "header",
 			Err:  err,
 		}
 	}
