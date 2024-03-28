@@ -89,7 +89,6 @@ linters-settings:
         # List of allowed packages.
         allow:
           - $gostd
-          - git.exness.io
           - google.golang.org
           - github.com
           - aidanwoods.dev/go-paseto
